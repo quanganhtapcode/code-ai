@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chia Tiền Ăn</title>
+    <title>Chia tiền ăn</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -101,10 +101,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Chia Tiền Ăn</h1>
+        <h1>Chia tiền ăn</h1>
         
         <div class="tab-navigation">
-            <button id="takeawayTab" class="tab-button active">Order đồ mang về</button>
+            <button id="takeawayTab" class="tab-button active">Order về</button>
             <button id="dineInTab" class="tab-button">Ăn tại quán</button>
         </div>
         
@@ -112,11 +112,11 @@
         <div id="takeawayForm">
             <table>
                 <tr>
-                    <th>Item</th>
-                    <th>Value (×1000 VND)</th>
+                    <th>Danh mục</th>
+                    <th>Giá (×1000 VND)</th>
                 </tr>
                 <tr>
-                    <td>Giá món</td>
+                    <td>Tiền ăn</td>
                     <td><input type="number" id="foodCost" value="100" min="0" step="any"></td>
                 </tr>
                 <tr>
@@ -138,8 +138,8 @@
         <div id="dineInForm" style="display: none;">
             <table>
                 <tr>
-                    <th>Item</th>
-                    <th>Value (×1000 VND)</th>
+                    <th>Danh mục</th>
+                    <th>Giá (×1000 VND)</th>
                 </tr>
                 <tr>
                     <td>Tổng tiền ăn</td>
@@ -234,7 +234,7 @@
             const discount = (parseFloat(discountInput.value) || 0) * 1000;
             const numPeople = parseInt(numPeopleInput.value) || 1;
             
-            // Calculate tiền cần trả = giá món + (tiền ship - giảm giá)/số người
+            // Calculate tiền cần trả = tiền ăn + (tiền ship - giảm giá)/số người
             const amountToPay = foodCost + (shippingCost - discount) / numPeople;
             
             // Update the UI
@@ -250,7 +250,7 @@
             
             // Update progress bar
             progressBarEl.style.width = `${progressPercentage}%`;
-            progressTextEl.textContent = `Giá món: ${formatCurrency(foodCost)} (${Math.round(progressPercentage)}%) / Tiền cần trả: ${formatCurrency(amountToPay)}`;
+            progressTextEl.textContent = `Tiền ăn: ${formatCurrency(foodCost)} (${Math.round(progressPercentage)}%) / Tiền cần trả: ${formatCurrency(amountToPay)}`;
         }
         
         function calculateDineIn() {
