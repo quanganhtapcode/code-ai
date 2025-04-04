@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chia tiền ăn</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-light: #f0f7ff;
+            --primary-dark: #1e40af;
+            --text-color: #333;
+            --text-light: #6c757d;
+            --border-color: #ddd;
+            --background-color: #f8fafc;
+            --container-bg: white;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --error-color: #dc3545;
+            --success-color: #198754;
+            --radius: 8px;
+            --progress-bg: #e9ecef;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #3b82f6;
+                --primary-light: #1e3a8a;
+                --primary-dark: #60a5fa;
+                --text-color: #e5e7eb;
+                --text-light: #9ca3af;
+                --border-color: #374151;
+                --background-color: #111827;
+                --container-bg: #1f2937;
+                --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                --progress-bg: #374151;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .tab-navigation {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: var(--radius) var(--radius) 0 0;
+            cursor: pointer;
+            margin-right: 5px;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .tab-button:hover {
+            background-color: var(--primary-light);
+        }
+
+        .tab-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--progress-bg);
+            font-weight: 600;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        label {
+            flex: 1;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            transition: border 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        input.error {
+            border-color: var(--error-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+            background-color: var(--progress-bg);
+            border-radius: var(--radius);
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.5s;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--primary-light);
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+            margin: 10px 0;
+        }
+
+        .helper-text {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .credit {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        #itemizedForm {
+            margin: 20px 0;
+        }
+
+        #addItemBtn {
+            margin-bottom: 10px;
+        }
+
+        #itemsTable .delete-btn {
+            background-color: var(--error-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .people-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .person-tag {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid var(--primary-color);
+        }
+
+        .person-tag.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 8px 5px;
+            }
+            
+            .tab-button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            .result-value {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chia tiền ăn</h1>
+        
+        <div class="tab-navigation" role="tablist">
+            <button id="takeawayTab" class="tab-button active" role="tab" aria-selected="true" aria-controls="takeawayForm">Order về</button>
+            <button id="dineInTab" class="tab-button" role="tab" aria-selected="false" aria-controls="dineInForm">Ăn tại quán</button>
+            <button id="itemizedTab" class="tab-button" role="tab" aria-selected="false" aria-controls="itemizedForm">Tính từng món</button>
+        </div>
+        
+        <!-- Takeaway mode form -->
+        <div id="takeawayForm" role="tabpanel" aria-labelledby="takeawayTab">
+            <table>
+                <tr>
+                    <th>Danh mục</th>
+                    <th>Giá (×1000 VND)</th>
+                </tr>
+                <tr>
+                    <td><label for="foodCost">Tiền ăn</label></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="number" id="foodCost" value="100" min="0" step="any" aria-describedby="foodCostError">
+                            <div id="foodCostError" class="error-message"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="shippingCost">Tiền ship</label></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="number" id="shippingCost" value="15" min="0" step="any" aria-describedby="shippingCostError">
+                            <div id="shippingCostError" class="error-message"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="discount">Giảm giá</label></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="number" id="discount" value="5" min="0" step="any" aria-describedby="discountError">
+                            <div id="discountError" class="error-message"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="numPeople">Số người</label></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="number" id="numPeople" value="3" min="1" step="1" aria-describedby="numPeopleError">
+                            <div id="numPeopleError" class="error-message"></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Dine-in mode form -->
+        <div id="dineInForm" role="tabpanel" aria-labelledby="dineInTab" style="display: none;">
+            <table>
+                <tr>
+                    <th>Danh mục</th>
+                    <th>Giá (×1000 VND)</th>
+                </tr>
+                <tr>
+                    <td><label for="totalFoodCost">Tổng tiền ăn</label></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="number" id="totalFoodCost" value="100" min="0" step="any" aria-describedby="totalFoodCostError">
+                            <div id="totalFoodCostError" class="error-message"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="notEatenCost">Món không ăn</label></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="number" id="notEatenCost" value="0" min="0" step="any" aria-describedby="notEatenCostError">
+                            <div id="notEatenCostError" class="error-message"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="numDiners">Số người ăn</label></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="number" id="numDiners" value="3" min="1" step="1" aria-describedby="numDinersError">
+                            <div id="numDinersError" class="error-message"></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Itemized mode form -->
+        <div id="itemizedForm" role="tabpanel" aria-labelledby="itemizedTab" style="display: none;">
+            <button id="addItemBtn" class="btn">+ Thêm món</button>
+            <button id="addPersonBtn" class="btn">+ Thêm người</button>
+            
+            <table id="itemsTable">
+                <thead>
+                    <tr>
+                        <th>Món ăn</th>
+                        <th>Giá (×1000 VND)</th>
+                        <th>Người ăn</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Items will be added dynamically -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            <div class="helper-text">Chọn từng người ăn món tương ứng</div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div id="progressText" class="progress-text"></div>
+        
+        <div class="result">
+            <p>Tiền cần trả:</p>
+            <span id="amountToPay" class="result-value">0</span>
+            <p id="additionalInfo" class="helper-text"></p>
+        </div>
+        
+        <div class="credit">
+            Created by quanganhdeptrai
+        </div>
+    </div>
+
+    <script>
+        class BillSplitter {
+            constructor() {
+                this.activeTab = 'takeaway';
+                this.people = ['Người 1', 'Người 2', 'Người 3'];
+                this.items = [];
+                
+                this.initElements();
+                this.initEventListeners();
+                this.calculateTakeaway();
+            }
+            
+            initElements() {
+                // Tab elements
+                this.tabs = {
+                    takeaway: document.getElementById('takeawayTab'),
+                    dineIn: document.getElementById('dineInTab'),
+                    itemized: document.getElementById('itemizedTab')
+                };
+                
+                // Form elements
+                this.forms = {
+                    takeaway: document.getElementById('takeawayForm'),
+                    dineIn: document.getElementById('dineInForm'),
+                    itemized: document.getElementById('itemizedForm')
+                };
+                
+                // Takeaway input elements
+                this.takeawayInputs = {
+                    foodCost: document.getElementById('foodCost'),
+                    shippingCost: document.getElementById('shippingCost'),
+                    discount: document.getElementById('discount'),
+                    numPeople: document.getElementById('numPeople')
+                };
+                
+                // Dine-in input elements
+                this.dineInInputs = {
+                    totalFoodCost: document.getElementById('totalFoodCost'),
+                    notEatenCost: document.getElementById('notEatenCost'),
+                    numDiners: document.getElementById('numDiners')
+                };
+                
+                // Itemized mode elements
+                this.itemizedElements = {
+                    addItemBtn: document.getElementById('addItemBtn'),
+                    addPersonBtn: document.getElementById('addPersonBtn'),
+                    itemsTable: document.getElementById('itemsTable').querySelector('tbody')
+                };
+                
+                // Result elements
+                this.resultElements = {
+                    amountToPay: document.getElementById('amountToPay'),
+                    progressBar: document.getElementById('progressBar'),
+                    progressText: document.getElementById('progressText'),
+                    additionalInfo: document.getElementById('additionalInfo')
+                };
+            }
+            
+            initEventListeners() {
+                // Tab click events
+                Object.entries(this.tabs).forEach(([tabName, tabElement]) => {
+                    tabElement.addEventListener('click', () => this.switchTab(tabName));
+                });
+                
+                // Takeaway input events
+                Object.values(this.takeawayInputs).forEach(input => {
+                    input.addEventListener('input', this.debounce(() => this.calculateTakeaway(), 300));
+                });
+                
+                // Dine-in input events
+                Object.values(this.dineInInputs).forEach(input => {
+                    input.addEventListener('input', this.debounce(() => this.calculateDineIn(), 300));
+                });
+                
+                // Itemized mode events
+                this.itemizedElements.addItemBtn.addEventListener('click', () => this.addNewItem());
+                this.itemizedElements.addPersonBtn.addEventListener('click', () => this.addNewPerson());
+            }
+            
+            switchTab(tabName) {
+                // Update active tab
+                this.activeTab = tabName;
+                
+                // Update tab buttons
+                Object.entries(this.tabs).forEach(([name, element]) => {
+                    if (name === tabName) {
+                        element.classList.add('active');
+                        element.setAttribute('aria-selected', 'true');
+                    } else {
+                        element.classList.remove('active');
+                        element.setAttribute('aria-selected', 'false');
+                    }
+                });
+                
+                // Show active form, hide others
+                Object.entries(this.forms).forEach(([name, element]) => {
+                    element.style.display = name === tabName ? 'block' : 'none';
+                });
+                
+                // Calculate based on active tab
+                if (tabName === 'takeaway') {
+                    this.calculateTakeaway();
+                } else if (tabName === 'dineIn') {
+                    this.calculateDineIn();
+                } else if (tabName === 'itemized') {
+                    this.calculateItemized();
+                }
+            }
+            
+            calculateTakeaway() {
+                if (this.activeTab !== 'takeaway') return;
+                
+                // Validate inputs
+                if (!this.validateInputs(this.takeawayInputs)) return;
+                
+                // Get values and convert from simplified to actual VND
+                const foodCost = (parseFloat(this.takeawayInputs.foodCost.value) || 0) * 1000;
+                const shippingCost = (parseFloat(this.takeawayInputs.shippingCost.value) || 0) * 1000;
+                const discount = (parseFloat(this.takeawayInputs.discount.value) || 0) * 1000;
+                const numPeople = parseInt(this.takeawayInputs.numPeople.value) || 1;
+                
+                // Calculate tiền cần trả = tiền ăn + (tiền ship - giảm giá)/số người
+                let amountToPay = foodCost + (shippingCost - discount) / numPeople;
+                
+                // Round to nearest thousand
+                amountToPay = this.roundToThousand(amountToPay);
+                
+                // Update the UI
+                this.resultElements.amountToPay.textContent = this.formatCurrency(amountToPay);
+                
+                // Calculate the progress percentage
+                let progressPercentage = 0;
+                if (amountToPay > 0) {
+                    progressPercentage = (foodCost / amountToPay) * 100;
+                    progressPercentage = Math.min(progressPercentage, 100);
+                }
+                
+                // Update progress bar
+                this.resultElements.progressBar.style.width = `${progressPercentage}%`;
+                this.resultElements.progressText.textContent = 
+                    `Tiền ăn: ${this.formatCurrency(foodCost)} (${Math.round(progressPercentage)}%) / Tiền cần trả: ${this.formatCurrency(amountToPay)}`;
+                
+                // Additional info
+                const shipPerPerson = (shippingCost - discount) / numPeople;
+                const exactAmount = foodCost + shipPerPerson;
+                this.resultElements.additionalInfo.textContent = 
+                    `Chính xác: ${this.formatCurrency(exactAmount)} → Làm tròn: ${this.formatCurrency(amountToPay)}\n` +
+                    `(Tiền ăn ${this.formatCurrency(foodCost)} + (Ship ${this.formatCurrency(shippingCost)} - Giảm giá ${this.formatCurrency(discount)})/${numPeople} người)`;
+            }
+            
+            calculateDineIn() {
+                if (this.activeTab !== 'dineIn') return;
+                
+                // Validate inputs
+                if (!this.validateInputs(this.dineInInputs)) return;
+                
+                // Get values and convert from simplified to actual VND
+                const totalFoodCost = (parseFloat(this.dineInInputs.totalFoodCost.value) || 0) * 1000;
+                const notEatenCost = (parseFloat(this.dineInInputs.notEatenCost.value) || 0) * 1000;
+                const numDiners = parseInt(this.dineInInputs.numDiners.value) || 1;
+                
+                // Calculate tiền cần trả = (tổng tiền ăn - món không ăn) / số người ăn
+                const foodCostToSplit = Math.max(0, totalFoodCost - notEatenCost);
+                let amountToPay = foodCostToSplit / numDiners;
+                
+                // Round to nearest thousand
+                amountToPay = this.roundToThousand(amountToPay);
+                
+                // Update the UI
+                this.resultElements.amountToPay.textContent = this.formatCurrency(amountToPay);
+                
+                // Calculate the progress percentage
+                let progressPercentage = 0;
+                if (totalFoodCost > 0) {
+                    progressPercentage = (foodCostToSplit / totalFoodCost) * 100;
+                    progressPercentage = Math.min(progressPercentage, 100);
+                }
+                
+                // Update progress bar
+                this.resultElements.progressBar.style.width = `${progressPercentage}%`;
+                this.resultElements.progressText.textContent = 
+                    `Món ăn của mình: ${this.formatCurrency(foodCostToSplit)} (${Math.round(progressPercentage)}%) / Tổng: ${this.formatCurrency(totalFoodCost)}`;
+                
+                // Additional info
+                const exactAmount = foodCostToSplit / numDiners;
+                this.resultElements.additionalInfo.textContent = 
+                    `Chính xác: ${this.formatCurrency(exactAmount)} → Làm tròn: ${this.formatCurrency(amountToPay)}\n` +
+                    `((Tổng hóa đơn ${this.formatCurrency(totalFoodCost)} - Món không ăn ${this.formatCurrency(notEatenCost)})/${numDiners} người)`;
+            }
+            
+            addNewItem() {
+                const itemIndex = this.items.length;
+                this.items.push({
+                    name: 'Món ăn',
+                    price: 0,
+                    eaters: []
+                });
+                
+                const row = document.createElement('tr');
+                row.dataset.index = itemIndex;
+                row.innerHTML = `
+                    <td>
+                        <input type="text" class="item-name" value="Món ăn ${itemIndex + 1}" placeholder="Tên món">
+                    </td>
+                    <td>
+                        <input type="number" class="item-price" value="0" min="0" step="any">
+                    </td>
+                    <td>
+                        <div class="people-selector" data-index="${itemIndex}">
+                            ${this.renderPeopleSelector(itemIndex)}
+                        </div>
+                    </td>
+                    <td>
+                        <button class="delete-btn" data-index="${itemIndex}">✕</button>
+                    </td>
+                `;
+                
+                this.itemizedElements.itemsTable.appendChild(row);
+                
+                // Add event listeners to the new elements
+                const nameInput = row.querySelector('.item-name');
+                const priceInput = row.querySelector('.item-price');
+                const deleteBtn = row.querySelector('.delete-btn');
+                
+                nameInput.addEventListener('input', (e) => {
+                    this.items[itemIndex].name = e.target.value;
+                    this.calculateItemized();
+                });
+                
+                priceInput.addEventListener('input', (e) => {
+                    this.items[itemIndex].price = parseFloat(e.target.value) || 0;
+                    this.calculateItemized();
+                });
+                
+                deleteBtn.addEventListener('click', () => {
+                    this.deleteItem(itemIndex);
+                });
+                
+                // Add event listeners to person tags
+                const personTags = row.querySelectorAll('.person-tag');
+                personTags.forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const personIndex = parseInt(e.target.dataset.personIndex);
+                        this.togglePersonSelection(itemIndex, personIndex);
+                    });
+                });
+                
+                this.calculateItemized();
+            }
+            
+            renderPeopleSelector(itemIndex) {
+                return this.people.map((person, personIndex) => {
+                    const isSelected = this.items[itemIndex].eaters.includes(personIndex);
+                    return `
+                        <span class="person-tag ${isSelected ? 'selected' : ''}" 
+                              data-person-index="${personIndex}">
+                            ${person}
+                        </span>
+                    `;
+                }).join('');
+            }
+            
+            togglePersonSelection(itemIndex, personIndex) {
+                const eaters = this.items[itemIndex].eaters;
+                const personPosition = eaters.indexOf(personIndex);
+                
+                if (personPosition === -1) {
+                    // Add person to eaters
+                    eaters.push(personIndex);
+                } else {
+                    // Remove person from eaters
+                    eaters.splice(personPosition, 1);
+                }
+                
+                // Update UI
+                const selector = document.querySelector(`.people-selector[data-index="${itemIndex}"]`);
+                selector.innerHTML = this.renderPeopleSelector(itemIndex);
+                
+                // Re-add event listeners
+                const personTags = selector.querySelectorAll('.person-tag');
+                personTags.forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const pIndex = parseInt(e.target.dataset.personIndex);
+                        this.togglePersonSelection(itemIndex, pIndex);
+                    });
+                });
+                
+                this.calculateItemized();
+            }
+            
+            deleteItem(index) {
+                // Remove item from array
+                this.items.splice(index, 1);
+                
+                // Remove row from table
+                const row = this.itemizedElements.itemsTable.querySelector(`tr[data-index="${index}"]`);
+                if (row) row.remove();
+                
+                // Recalculate and update indices
+                this.recalculateItemIndices();
+                this.calculateItemized();
+            }
+            
+            recalculateItemIndices() {
+                const rows = this.itemizedElements.itemsTable.querySelectorAll('tr');
+                rows.forEach((row, newIndex) => {
+                    row.dataset.index = newIndex;
+                    
+                    const peopleSelector = row.querySelector('.people-selector');
+                    if (peopleSelector) {
+                        peopleSelector.dataset.index = newIndex;
+                    }
+                    
+                    const deleteBtn = row.querySelector('.delete-btn');
+                    if (deleteBtn) {
+                        deleteBtn.dataset.index = newIndex;
+                    }
+                });
+            }
+            
+            addNewPerson() {
+                const personName = prompt('Nhập tên người:', `Người ${this.people.length + 1}`);
+                if (!personName) return;
+                
+                this.people.push(personName);
+                
+                // Update all people selectors
+                this.items.forEach((item, itemIndex) => {
+                    const selector = document.querySelector(`.people-selector[data-index="${itemIndex}"]`);
+                    if (selector) {
+                        selector.innerHTML = this.renderPeopleSelector(itemIndex);
+                        
+                        // Re-add event listeners
+                        const personTags = selector.querySelectorAll('.person-tag');
+                        personTags.forEach(tag => {
+                            tag.addEventListener('click', (e) => {
+                                const pIndex = parseInt(e.target.dataset.personIndex);
+                                this.togglePersonSelection(itemIndex, pIndex);
+                            });
+                        });
+                    }
+                });
+                
+                this.calculateItemized();
+            }
+            
+            calculateItemized() {
+                if (this.activeTab !== 'itemized') return;
+                
+                // Calculate what each person should pay
+                const personCosts = Array(this.people.length).fill(0);
+                
+                // Calculate total cost of each item and divide among eaters
+                this.items.forEach(item => {
+                    const itemPrice = item.price * 1000; // Convert to VND
+                    const eaters = item.eaters;
+                    
+                    if (eaters.length > 0) {
+                        const pricePerPerson = itemPrice / eaters.length;
+                        eaters.forEach(personIndex => {
+                            personCosts[personIndex] += pricePerPerson;
+                        });
+                    }
+                });
+                
+                // Calculate total bill
+                const totalBill = this.items.reduce((sum, item) => sum + item.price * 1000, 0);
+                
+                // Update the UI with a breakdown of what each person pays
+                let resultHTML = '';
+                let hasResults = false;
+                
+                // Round each person's costs to the nearest thousand
+                personCosts.forEach((cost, index) => {
+                    if (cost > 0) {
+                        hasResults = true;
+                        const roundedCost = this.roundToThousand(cost);
+                        resultHTML += `<div>${this.people[index]}: <strong>${this.formatCurrency(roundedCost)}</strong></div>`;
+                    }
+                });
+                
+                // Reset content if no results
+                if (!hasResults) {
+                    this.resultElements.amountToPay.textContent = '0';
+                    this.resultElements.additionalInfo.innerHTML = 'Thêm món ăn và chọn người ăn để tính tiền';
+                    this.resultElements.progressBar.style.width = '0%';
+                    this.resultElements.progressText.textContent = '';
+                    return;
+                }
+                
+                // Show average amount if more than one person
+                let average = 0;
+                const activePeople = personCosts.filter(cost => cost > 0).length;
+                if (activePeople > 0) {
+                    average = totalBill / activePeople;
+                }
+                
+                // Round average to nearest thousand
+                const roundedAverage = this.roundToThousand(average);
+                
+                this.resultElements.amountToPay.textContent = this.formatCurrency(roundedAverage);
+                this.resultElements.additionalInfo.innerHTML = resultHTML;
+                
+                // Update progress bar - showing percentage of bill covered by selected items
+                const itemsWithEaters = this.items.filter(item => item.eaters.length > 0);
+                const coveredAmount = itemsWithEaters.reduce((sum, item) => sum + item.price * 1000, 0);
+                
+                let progressPercentage = 0;
+                if (totalBill > 0) {
+                    progressPercentage = (coveredAmount / totalBill) * 100;
+                }
+                
+                this.resultElements.progressBar.style.width = `${progressPercentage}%`;
+                this.resultElements.progressText.textContent = 
+                    `Đã chia: ${this.formatCurrency(coveredAmount)} (${Math.round(progressPercentage)}%) / Tổng: ${this.formatCurrency(totalBill)}`;
+            }
+            
+            validateInputs(inputs) {
+                let isValid = true;
+                
+                Object.entries(inputs).forEach(([name, input]) => {
+                    const value = input.value.trim();
+                    const errorElement = document.getElementById(`${input.id}Error`);
+                    
+                    // Reset error state
+                    input.classList.remove('error');
+                    if (errorElement) errorElement.textContent = '';
+                    
+                    // Check if empty
+                    if (value === '') {
+                        isValid = false;
+                        input.classList.add('error');
+                        if (errorElement) errorElement.textContent = 'Vui lòng nhập giá trị';
+                        return;
+                    }
+                    
+                    // Check if valid number
+                    const numValue = parseFloat(value);
+                    if (isNaN(numValue)) {
+                        isValid = false;
+                        input.classList.add('error');
+                        if (errorElement) errorElement.textContent = 'Vui lòng nhập số hợp lệ';
+                        return;
+                    }
+                    
+                    // Check if negative
+                    if (numValue < 0) {
+                        isValid = false;
+                        input.classList.add('error');
+                        if (errorElement) errorElement.textContent = 'Giá trị không được âm';
+                        return;
+                    }
+                    
+                    // Check if people/diners count is at least 1
+                    if ((name === 'numPeople' || name === 'numDiners') && numValue < 1) {
+                        isValid = false;
+                        input.classList.add('error');
+                        if (errorElement) errorElement.textContent = 'Phải có ít nhất 1 người';
+                        return;
+                    }
+                });
+                
+                return isValid;
+            }
+            
+            // Round to nearest thousand (1000 VND)
+            roundToThousand(amount) {
+                return Math.round(amount / 1000) * 1000;
+            }
+            
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('vi-VN').format(Math.round(amount));
+            }
+            
+            // Utility method to debounce function calls
+            debounce(func, wait) {
+                let timeout;
+                return (...args) => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const billSplitter = new BillSplitter();
+        });
+    </script>
+</body>
+</html>
