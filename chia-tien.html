@@ -45,7 +45,7 @@
 
         body {
             font-family: var(--font-family);
-            max-width: 700px;
+            max-width: 750px;
             margin: 0 auto;
             padding: 20px;
             background-color: var(--background-color);
@@ -422,6 +422,8 @@
         <div id="progressText" class="progress-text"></div>
         
         <div class="result">
+            <p>Tiền cần trả:</p>
+            <span id="amountToPay" class="result-value">0</span>
             <p id="additionalInfo" class="helper-text"></p>
         </div>
         
@@ -475,6 +477,7 @@
                 };
                 
                 this.resultElements = {
+                    amountToPay: document.getElementById('amountToPay'),
                     progressBar: document.getElementById('progressBar'),
                     progressText: document.getElementById('progressText'),
                     additionalInfo: document.getElementById('additionalInfo')
@@ -527,6 +530,7 @@
             calculateTakeaway() {
                 if (this.activeTab !== 'takeaway') return;
                 
+                // Use 0 as default for empty or invalid inputs, 1 for numPeople
                 const foodCost = (parseFloat(this.takeawayInputs.foodCost.value) || 0) * 1000;
                 const shippingCost = (parseFloat(this.takeawayInputs.shippingCost.value) || 0) * 1000;
                 const discount = (parseFloat(this.takeawayInputs.discount.value) || 0) * 1000;
@@ -557,6 +561,7 @@
             calculateDineIn() {
                 if (this.activeTab !== 'dineIn') return;
                 
+                // Use 0 as default for empty or invalid inputs, 1 for numDiners
                 const totalFoodCost = (parseFloat(this.dineInInputs.totalFoodCost.value) || 0) * 1000;
                 const notEatenCost = (parseFloat(this.dineInInputs.notEatenCost.value) || 0) * 1000;
                 const numDiners = parseInt(this.dineInInputs.numDiners.value) || 1;
@@ -802,6 +807,7 @@
                 });
                 
                 if (!hasResults) {
+                    this.resultElements.amountToPay.textContent = '0';
                     this.resultElements.additionalInfo.innerHTML = 'Thêm món ăn, chọn người ăn và người trả để tính tiền';
                     this.resultElements.progressBar.style.width = '0%';
                     this.resultElements.progressText.textContent = '';
@@ -812,6 +818,7 @@
                 const totalPaid = personPayments.reduce((sum, paid) => sum + paid, 0);
                 const progressPercentage = totalBill > 0 ? (totalPaid / totalBill) * 100 : 0;
                 
+                this.resultElements.amountToPay.textContent = 'Xem chi tiết';
                 this.resultElements.additionalInfo.innerHTML = resultHTML;
                 this.resultElements.progressBar.style.width = `${Math.min(progressPercentage, 100)}%`;
                 this.resultElements.progressText.textContent = 
@@ -828,6 +835,7 @@
                     input.classList.remove('error');
                     if (errorElement) errorElement.textContent = '';
                     
+                    // Skip empty check - inputs are optional
                     if (value !== '') {
                         const numValue = parseFloat(value);
                         if (isNaN(numValue)) {
