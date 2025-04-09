@@ -68,8 +68,14 @@
 
         .tab-navigation {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-buttons {
+            display: flex;
         }
 
         .tab-button {
@@ -92,6 +98,21 @@
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
+        }
+
+        .reset-btn {
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+        }
+
+        .reset-btn:hover {
+            background-color: var(--primary-dark);
         }
 
         table {
@@ -222,17 +243,11 @@
             font-size: 12px;
         }
 
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-
         #itemizedForm {
             margin: 20px 0;
         }
 
-        #addItemBtn {
+        #addItemBtn, #addPersonBtn {
             margin-bottom: 10px;
         }
 
@@ -268,7 +283,7 @@
 
         #itemsTable th:nth-child(3), #itemsTable td:nth-child(3),
         #itemsTable th:nth-child(4), #itemsTable td:nth-child(4) {
-            min-width: 120px; /* Same width for "Người ăn" and "Người trả" */
+            min-width: 120px;
         }
 
         @media (max-width: 480px) {
@@ -292,6 +307,11 @@
             .result-value {
                 font-size: 20px;
             }
+
+            .reset-btn {
+                padding: 8px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -300,9 +320,12 @@
         <h1>Chia tiền ăn</h1>
         
         <div class="tab-navigation" role="tablist">
-            <button id="takeawayTab" class="tab-button active" role="tab" aria-selected="true" aria-controls="takeawayForm">Order về</button>
-            <button id="dineInTab" class="tab-button" role="tab" aria-selected="false" aria-controls="dineInForm">Ăn tại quán</button>
-            <button id="itemizedTab" class="tab-button" role="tab" aria-selected="false" aria-controls="itemizedForm">Tính từng món</button>
+            <div class="tab-buttons">
+                <button id="takeawayTab" class="tab-button active" role="tab" aria-selected="true" aria-controls="takeawayForm">Order về</button>
+                <button id="dineInTab" class="tab-button" role="tab" aria-selected="false" aria-controls="dineInForm">Ăn tại quán</button>
+                <button id="itemizedTab" class="tab-button" role="tab" aria-selected="false" aria-controls="itemizedForm">Tính từng món</button>
+            </div>
+            <button id="resetActiveTabBtn" class="reset-btn" title="Làm mới">↻</button>
         </div>
         
         <!-- Takeaway mode form -->
@@ -343,7 +366,7 @@
                     <td><label for="numPeople">Số người</label></td>
                     <td>
                         <div class="input-wrapper">
-                            <input type="number" id="numPeople" placeholder="eg., 3" min="1" step="1" aria-describedby="numPeopleError">
+                            <input type="number" id="numPeople" placeholder="e.g., 3" min="1" step="1" aria-describedby="numPeopleError">
                             <div id="numPeopleError" class="error-message"></div>
                         </div>
                     </td>
@@ -392,7 +415,6 @@
         <div id="itemizedForm" role="tabpanel" aria-labelledby="itemizedTab" style="display: none;">
             <button id="addItemBtn" class="btn">+ Thêm món</button>
             <button id="addPersonBtn" class="btn">+ Thêm người</button>
-            
             <table id="itemsTable">
                 <thead>
                     <tr>
@@ -409,7 +431,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="5">
-                            <div class="helper-text">Chọn từng người ăn và người trả cho món tương ứng</div>
+                            <div class="helper-text">Chọn từng người ăn và người trả cho món tương ứng. Có thể có nhiều người trả cho một món.</div>
                         </td>
                     </tr>
                 </tfoot>
@@ -422,8 +444,7 @@
         <div id="progressText" class="progress-text"></div>
         
         <div class="result">
-            <p>Tiền cần trả:</p>
-            <span id="amountToPay" class="result-value">0</span>
+            <span id="amountToPay" class="result-value"></span>
             <p id="additionalInfo" class="helper-text"></p>
         </div>
         
@@ -440,6 +461,7 @@
                 this.items = [];
                 
                 this.initElements();
+                this.loadSavedData();
                 this.initEventListeners();
                 this.calculateTakeaway();
             }
@@ -482,6 +504,8 @@
                     progressText: document.getElementById('progressText'),
                     additionalInfo: document.getElementById('additionalInfo')
                 };
+
+                this.resetBtn = document.getElementById('resetActiveTabBtn');
             }
             
             initEventListeners() {
@@ -490,15 +514,29 @@
                 });
                 
                 Object.values(this.takeawayInputs).forEach(input => {
-                    input.addEventListener('input', this.debounce(() => this.calculateTakeaway(), 300));
+                    input.addEventListener('input', this.debounce(() => {
+                        this.calculateTakeaway();
+                        this.saveData();
+                    }, 300));
                 });
                 
                 Object.values(this.dineInInputs).forEach(input => {
-                    input.addEventListener('input', this.debounce(() => this.calculateDineIn(), 300));
+                    input.addEventListener('input', this.debounce(() => {
+                        this.calculateDineIn();
+                        this.saveData();
+                    }, 300));
                 });
                 
-                this.itemizedElements.addItemBtn.addEventListener('click', () => this.addNewItem());
-                this.itemizedElements.addPersonBtn.addEventListener('click', () => this.addNewPerson());
+                this.itemizedElements.addItemBtn.addEventListener('click', () => {
+                    this.addNewItem();
+                    this.saveData();
+                });
+                this.itemizedElements.addPersonBtn.addEventListener('click', () => {
+                    this.addNewPerson();
+                    this.saveData();
+                });
+
+                this.resetBtn.addEventListener('click', () => this.resetActiveTab());
             }
             
             switchTab(tabName) {
@@ -518,19 +556,15 @@
                     element.style.display = name === tabName ? 'block' : 'none';
                 });
                 
-                if (tabName === 'takeaway') {
-                    this.calculateTakeaway();
-                } else if (tabName === 'dineIn') {
-                    this.calculateDineIn();
-                } else if (tabName === 'itemized') {
-                    this.calculateItemized();
-                }
+                if (tabName === 'takeaway') this.calculateTakeaway();
+                else if (tabName === 'dineIn') this.calculateDineIn();
+                else if (tabName === 'itemized') this.calculateItemized();
+                this.saveData();
             }
             
             calculateTakeaway() {
                 if (this.activeTab !== 'takeaway') return;
                 
-                // Use 0 as default for empty or invalid inputs, 1 for numPeople
                 const foodCost = (parseFloat(this.takeawayInputs.foodCost.value) || 0) * 1000;
                 const shippingCost = (parseFloat(this.takeawayInputs.shippingCost.value) || 0) * 1000;
                 const discount = (parseFloat(this.takeawayInputs.discount.value) || 0) * 1000;
@@ -561,7 +595,6 @@
             calculateDineIn() {
                 if (this.activeTab !== 'dineIn') return;
                 
-                // Use 0 as default for empty or invalid inputs, 1 for numDiners
                 const totalFoodCost = (parseFloat(this.dineInInputs.totalFoodCost.value) || 0) * 1000;
                 const notEatenCost = (parseFloat(this.dineInInputs.notEatenCost.value) || 0) * 1000;
                 const numDiners = parseInt(this.dineInInputs.numDiners.value) || 1;
@@ -591,123 +624,57 @@
             addNewItem() {
                 const itemIndex = this.items.length;
                 this.items.push({
-                    name: 'Món ăn',
+                    name: `Món ăn ${itemIndex + 1}`,
                     price: 0,
                     eaters: [],
-                    payer: null
+                    payers: []
                 });
                 
                 const row = document.createElement('tr');
                 row.dataset.index = itemIndex;
                 row.innerHTML = `
-                    <td>
-                        <input type="text" class="item-name" value="Món ăn ${itemIndex + 1}" placeholder="Tên món">
-                    </td>
-                    <td>
-                        <input type="number" class="item-price" value="0" min="0" step="any">
-                    </td>
-                    <td>
-                        <div class="people-selector eaters-selector" data-index="${itemIndex}">
-                            ${this.renderPeopleSelector(itemIndex, 'eaters')}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="people-selector payer-selector" data-index="${itemIndex}">
-                            ${this.renderPeopleSelector(itemIndex, 'payer')}
-                        </div>
-                    </td>
-                    <td>
-                        <button class="delete-btn" data-index="${itemIndex}">✕</button>
-                    </td>
+                    <td><input type="text" class="item-name" value="${this.items[itemIndex].name}" placeholder="Tên món"></td>
+                    <td><input type="number" class="item-price" value="0" min="0" step="any"></td>
+                    <td><div class="people-selector eaters-selector" data-index="${itemIndex}">${this.renderPeopleSelector(itemIndex, 'eaters')}</div></td>
+                    <td><div class="people-selector payers-selector" data-index="${itemIndex}">${this.renderPeopleSelector(itemIndex, 'payers')}</div></td>
+                    <td><button class="delete-btn" data-index="${itemIndex}">✕</button></td>
                 `;
                 
                 this.itemizedElements.itemsTable.appendChild(row);
-                
-                const nameInput = row.querySelector('.item-name');
-                const priceInput = row.querySelector('.item-price');
-                const deleteBtn = row.querySelector('.delete-btn');
-                
-                nameInput.addEventListener('input', (e) => {
-                    this.items[itemIndex].name = e.target.value;
-                    this.calculateItemized();
-                });
-                
-                priceInput.addEventListener('input', (e) => {
-                    this.items[itemIndex].price = parseFloat(e.target.value) || 0;
-                    this.calculateItemized();
-                });
-                
-                deleteBtn.addEventListener('click', () => {
-                    this.deleteItem(itemIndex);
-                });
-                
-                const eaterTags = row.querySelectorAll('.eaters-selector .person-tag');
-                eaterTags.forEach(tag => {
-                    tag.addEventListener('click', (e) => {
-                        const personIndex = parseInt(e.target.dataset.personIndex);
-                        this.togglePersonSelection(itemIndex, personIndex, 'eaters');
-                    });
-                });
-                
-                const payerTags = row.querySelectorAll('.payer-selector .person-tag');
-                payerTags.forEach(tag => {
-                    tag.addEventListener('click', (e) => {
-                        const personIndex = parseInt(e.target.dataset.personIndex);
-                        this.togglePersonSelection(itemIndex, personIndex, 'payer');
-                    });
-                });
-                
+                this.attachItemEventListeners(row, itemIndex);
                 this.calculateItemized();
             }
             
             renderPeopleSelector(itemIndex, type = 'eaters') {
-                const isPayer = type === 'payer';
-                const selectedValue = isPayer ? this.items[itemIndex].payer : this.items[itemIndex].eaters;
+                const isPayers = type === 'payers';
+                const selectedValue = isPayers ? this.items[itemIndex].payers : this.items[itemIndex].eaters;
                 return this.people.map((person, personIndex) => {
-                    const isSelected = isPayer 
-                        ? personIndex === selectedValue 
-                        : selectedValue.includes(personIndex);
-                    return `
-                        <span class="person-tag ${isSelected ? 'selected' : ''}" 
-                              data-person-index="${personIndex}">
-                            ${person}
-                        </span>
-                    `;
+                    const isSelected = selectedValue.includes(personIndex);
+                    return `<span class="person-tag ${isSelected ? 'selected' : ''}" data-person-index="${personIndex}">${person}</span>`;
                 }).join('');
             }
             
             togglePersonSelection(itemIndex, personIndex, type = 'eaters') {
-                if (type === 'eaters') {
-                    const eaters = this.items[itemIndex].eaters;
-                    const personPosition = eaters.indexOf(personIndex);
-                    if (personPosition === -1) {
-                        eaters.push(personIndex);
-                    } else {
-                        eaters.splice(personPosition, 1);
-                    }
-                    const selector = document.querySelector(`.eaters-selector[data-index="${itemIndex}"]`);
-                    selector.innerHTML = this.renderPeopleSelector(itemIndex, 'eaters');
-                    const eaterTags = selector.querySelectorAll('.person-tag');
-                    eaterTags.forEach(tag => {
-                        tag.addEventListener('click', (e) => {
-                            const pIndex = parseInt(e.target.dataset.personIndex);
-                            this.togglePersonSelection(itemIndex, pIndex, 'eaters');
-                        });
+                const targetArray = type === 'eaters' ? this.items[itemIndex].eaters : this.items[itemIndex].payers;
+                const personPosition = targetArray.indexOf(personIndex);
+                
+                if (personPosition === -1) targetArray.push(personIndex);
+                else targetArray.splice(personPosition, 1);
+                
+                const selectorClass = type === 'eaters' ? '.eaters-selector' : '.payers-selector';
+                const selector = document.querySelector(`${selectorClass}[data-index="${itemIndex}"]`);
+                selector.innerHTML = this.renderPeopleSelector(itemIndex, type);
+                
+                const tags = selector.querySelectorAll('.person-tag');
+                tags.forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const pIndex = parseInt(e.target.dataset.personIndex);
+                        this.togglePersonSelection(itemIndex, pIndex, type);
                     });
-                } else if (type === 'payer') {
-                    const currentPayer = this.items[itemIndex].payer;
-                    this.items[itemIndex].payer = currentPayer === personIndex ? null : personIndex;
-                    const selector = document.querySelector(`.payer-selector[data-index="${itemIndex}"]`);
-                    selector.innerHTML = this.renderPeopleSelector(itemIndex, 'payer');
-                    const payerTags = selector.querySelectorAll('.person-tag');
-                    payerTags.forEach(tag => {
-                        tag.addEventListener('click', (e) => {
-                            const pIndex = parseInt(e.target.dataset.personIndex);
-                            this.togglePersonSelection(itemIndex, pIndex, 'payer');
-                        });
-                    });
-                }
+                });
+                
                 this.calculateItemized();
+                this.saveData();
             }
             
             deleteItem(index) {
@@ -716,6 +683,7 @@
                 if (row) row.remove();
                 this.recalculateItemIndices();
                 this.calculateItemized();
+                this.saveData();
             }
             
             recalculateItemIndices() {
@@ -724,8 +692,8 @@
                     row.dataset.index = newIndex;
                     const eatersSelector = row.querySelector('.eaters-selector');
                     if (eatersSelector) eatersSelector.dataset.index = newIndex;
-                    const payerSelector = row.querySelector('.payer-selector');
-                    if (payerSelector) payerSelector.dataset.index = newIndex;
+                    const payersSelector = row.querySelector('.payers-selector');
+                    if (payersSelector) payersSelector.dataset.index = newIndex;
                     const deleteBtn = row.querySelector('.delete-btn');
                     if (deleteBtn) deleteBtn.dataset.index = newIndex;
                 });
@@ -736,45 +704,30 @@
                 if (!personName) return;
                 
                 this.people.push(personName);
-                
-                this.items.forEach((item, itemIndex) => {
-                    const eatersSelector = document.querySelector(`.eaters-selector[data-index="${itemIndex}"]`);
-                    if (eatersSelector) {
-                        eatersSelector.innerHTML = this.renderPeopleSelector(itemIndex, 'eaters');
-                        const eaterTags = eatersSelector.querySelectorAll('.person-tag');
-                        eaterTags.forEach(tag => {
-                            tag.addEventListener('click', (e) => {
-                                const pIndex = parseInt(e.target.dataset.personIndex);
-                                this.togglePersonSelection(itemIndex, pIndex, 'eaters');
-                            });
-                        });
-                    }
-                    const payerSelector = document.querySelector(`.payer-selector[data-index="${itemIndex}"]`);
-                    if (payerSelector) {
-                        payerSelector.innerHTML = this.renderPeopleSelector(itemIndex, 'payer');
-                        const payerTags = payerSelector.querySelectorAll('.person-tag');
-                        payerTags.forEach(tag => {
-                            tag.addEventListener('click', (e) => {
-                                const pIndex = parseInt(e.target.dataset.personIndex);
-                                this.togglePersonSelection(itemIndex, pIndex, 'payer');
-                            });
-                        });
-                    }
-                });
-                
+                this.refreshItemizedTable();
                 this.calculateItemized();
+                this.saveData();
             }
             
             calculateItemized() {
                 if (this.activeTab !== 'itemized') return;
                 
-                const personCosts = Array(this.people.length).fill(0); // What each person owes
-                const personPayments = Array(this.people.length).fill(0); // What each person paid
+                const allItemsHavePayers = this.items.every(item => item.payers && item.payers.length > 0);
+                if (!allItemsHavePayers) {
+                    this.resultElements.amountToPay.textContent = '';
+                    this.resultElements.additionalInfo.textContent = 'Vui lòng chọn ít nhất một người trả cho mỗi món';
+                    this.resultElements.progressBar.style.width = '0%';
+                    this.resultElements.progressText.textContent = '';
+                    return;
+                }
+                
+                const personCosts = Array(this.people.length).fill(0);
+                const personPayments = Array(this.people.length).fill(0);
                 
                 this.items.forEach(item => {
                     const itemPrice = item.price * 1000;
                     const eaters = item.eaters;
-                    const payer = item.payer;
+                    const payers = item.payers;
                     
                     if (eaters.length > 0) {
                         const pricePerPerson = itemPrice / eaters.length;
@@ -783,85 +736,190 @@
                         });
                     }
                     
-                    if (payer !== null) {
-                        personPayments[payer] += itemPrice;
+                    if (payers.length > 0) {
+                        const payerShare = itemPrice / payers.length;
+                        payers.forEach(payerIndex => {
+                            personPayments[payerIndex] += payerShare;
+                        });
                     }
                 });
                 
                 const totalBill = this.items.reduce((sum, item) => sum + item.price * 1000, 0);
-                let resultHTML = '';
-                let hasResults = false;
+                const totalPaid = personPayments.reduce((sum, paid) => sum + paid, 0);
+                const progressPercentage = totalBill > 0 ? (totalPaid / totalBill) * 100 : 0;
                 
                 const netAmounts = personCosts.map((cost, index) => {
                     const paid = personPayments[index];
-                    const net = paid - cost; // Positive = they get money back, Negative = they owe money
+                    const net = paid - cost;
                     return { index, cost, paid, net };
                 }).filter(person => person.cost > 0 || person.paid > 0);
                 
-                netAmounts.forEach(person => {
-                    hasResults = true;
-                    const roundedNet = this.roundToThousand(person.net);
-                    const status = roundedNet > 0 ? 'nhận lại' : roundedNet < 0 ? 'phải trả thêm' : 'đã đủ';
-                    const amountText = roundedNet !== 0 ? this.formatCurrency(Math.abs(roundedNet)) : '0';
-                    resultHTML += `<div>${this.people[person.index]}: <strong>${amountText}</strong> (${status})</div>`;
-                });
-                
-                if (!hasResults) {
-                    this.resultElements.amountToPay.textContent = '0';
+                if (netAmounts.length === 0) {
+                    this.resultElements.amountToPay.textContent = '';
                     this.resultElements.additionalInfo.innerHTML = 'Thêm món ăn, chọn người ăn và người trả để tính tiền';
                     this.resultElements.progressBar.style.width = '0%';
                     this.resultElements.progressText.textContent = '';
                     return;
                 }
                 
-                const totalOwed = personCosts.reduce((sum, cost) => sum + cost, 0);
-                const totalPaid = personPayments.reduce((sum, paid) => sum + paid, 0);
-                const progressPercentage = totalBill > 0 ? (totalPaid / totalBill) * 100 : 0;
+                const transactions = this.computeTransactions(netAmounts);
                 
-                this.resultElements.amountToPay.textContent = 'Xem chi tiết';
-                this.resultElements.additionalInfo.innerHTML = resultHTML;
+                this.resultElements.amountToPay.textContent = 'Các giao dịch cần thực hiện:';
+                if (transactions.length === 0) {
+                    this.resultElements.additionalInfo.innerHTML = 'Tất cả đã thanh toán đủ, không cần chuyển khoản';
+                } else {
+                    const transactionText = transactions.map(t => {
+                        const roundedAmount = this.roundToThousand(t.amount);
+                        const formattedAmount = this.formatCurrency(roundedAmount);
+                        return `${t.from} chuyển cho ${t.to} ${formattedAmount} VND`;
+                    }).join('<br>');
+                    this.resultElements.additionalInfo.innerHTML = transactionText;
+                }
+                
                 this.resultElements.progressBar.style.width = `${Math.min(progressPercentage, 100)}%`;
                 this.resultElements.progressText.textContent = 
                     `Đã trả: ${this.formatCurrency(totalPaid)} (${Math.round(progressPercentage)}%) / Tổng: ${this.formatCurrency(totalBill)}`;
             }
             
-            validateInputs(inputs) {
-                let isValid = true;
+            computeTransactions(netAmounts) {
+                const debtors = netAmounts.filter(person => person.net < 0).sort((a, b) => a.net - b.net);
+                const creditors = netAmounts.filter(person => person.net > 0).sort((a, b) => b.net - a.net);
+                const transactions = [];
                 
-                Object.entries(inputs).forEach(([name, input]) => {
-                    const value = input.value.trim();
-                    const errorElement = document.getElementById(`${input.id}Error`);
-                    
-                    input.classList.remove('error');
-                    if (errorElement) errorElement.textContent = '';
-                    
-                    // Skip empty check - inputs are optional
-                    if (value !== '') {
-                        const numValue = parseFloat(value);
-                        if (isNaN(numValue)) {
-                            isValid = false;
-                            input.classList.add('error');
-                            if (errorElement) errorElement.textContent = 'Vui lòng nhập số hợp lệ';
-                            return;
-                        }
-                        
-                        if (numValue < 0) {
-                            isValid = false;
-                            input.classList.add('error');
-                            if (errorElement) errorElement.textContent = 'Giá trị không được âm';
-                            return;
-                        }
-                        
-                        if ((name === 'numPeople' || name === 'numDiners') && numValue < 1) {
-                            isValid = false;
-                            input.classList.add('error');
-                            if (errorElement) errorElement.textContent = 'Phải có ít nhất 1 người';
-                            return;
-                        }
+                while (debtors.length > 0 && creditors.length > 0) {
+                    const debtor = debtors[0];
+                    const creditor = creditors[0];
+                    const amount = Math.min(-debtor.net, creditor.net);
+                    transactions.push({
+                        from: this.people[debtor.index],
+                        to: this.people[creditor.index],
+                        amount: amount
+                    });
+                    debtor.net += amount;
+                    creditor.net -= amount;
+                    if (Math.abs(debtor.net) < 1e-6) debtors.shift();
+                    if (Math.abs(creditor.net) < 1e-6) creditors.shift();
+                }
+                
+                return transactions;
+            }
+            
+            loadSavedData() {
+                const savedData = localStorage.getItem('billSplitterData');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    if (data.takeaway) {
+                        this.takeawayInputs.foodCost.value = data.takeaway.foodCost || '';
+                        this.takeawayInputs.shippingCost.value = data.takeaway.shippingCost || '';
+                        this.takeawayInputs.discount.value = data.takeaway.discount || '';
+                        this.takeawayInputs.numPeople.value = data.takeaway.numPeople || '';
                     }
+                    if (data.dineIn) {
+                        this.dineInInputs.totalFoodCost.value = data.dineIn.totalFoodCost || '';
+                        this.dineInInputs.notEatenCost.value = data.dineIn.notEatenCost || '';
+                        this.dineInInputs.numDiners.value = data.dineIn.numDiners || '';
+                    }
+                    if (data.itemized) {
+                        this.people = data.itemized.people || this.people;
+                        this.items = data.itemized.items || [];
+                        this.refreshItemizedTable();
+                    }
+                    this.activeTab = data.activeTab || 'takeaway';
+                    this.switchTab(this.activeTab);
+                }
+            }
+            
+            saveData() {
+                const data = {
+                    activeTab: this.activeTab,
+                    takeaway: {
+                        foodCost: this.takeawayInputs.foodCost.value,
+                        shippingCost: this.takeawayInputs.shippingCost.value,
+                        discount: this.takeawayInputs.discount.value,
+                        numPeople: this.takeawayInputs.numPeople.value
+                    },
+                    dineIn: {
+                        totalFoodCost: this.dineInInputs.totalFoodCost.value,
+                        notEatenCost: this.dineInInputs.notEatenCost.value,
+                        numDiners: this.dineInInputs.numDiners.value
+                    },
+                    itemized: {
+                        people: this.people,
+                        items: this.items
+                    }
+                };
+                localStorage.setItem('billSplitterData', JSON.stringify(data));
+            }
+            
+            resetActiveTab() {
+                if (this.activeTab === 'takeaway') {
+                    Object.values(this.takeawayInputs).forEach(input => input.value = '');
+                    this.calculateTakeaway();
+                } else if (this.activeTab === 'dineIn') {
+                    Object.values(this.dineInInputs).forEach(input => input.value = '');
+                    this.calculateDineIn();
+                } else if (this.activeTab === 'itemized') {
+                    this.people = ['Người 1', 'Người 2', 'Người 3'];
+                    this.items = [];
+                    this.itemizedElements.itemsTable.innerHTML = '';
+                    this.calculateItemized();
+                }
+                this.saveData();
+            }
+            
+            refreshItemizedTable() {
+                this.itemizedElements.itemsTable.innerHTML = '';
+                this.items.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.dataset.index = index;
+                    row.innerHTML = `
+                        <td><input type="text" class="item-name" value="${item.name}" placeholder="Tên món"></td>
+                        <td><input type="number" class="item-price" value="${item.price}" min="0" step="any"></td>
+                        <td><div class="people-selector eaters-selector" data-index="${index}">${this.renderPeopleSelector(index, 'eaters')}</div></td>
+                        <td><div class="people-selector payers-selector" data-index="${index}">${this.renderPeopleSelector(index, 'payers')}</div></td>
+                        <td><button class="delete-btn" data-index="${index}">✕</button></td>
+                    `;
+                    this.itemizedElements.itemsTable.appendChild(row);
+                    this.attachItemEventListeners(row, index);
+                });
+            }
+            
+            attachItemEventListeners(row, itemIndex) {
+                const nameInput = row.querySelector('.item-name');
+                const priceInput = row.querySelector('.item-price');
+                const deleteBtn = row.querySelector('.delete-btn');
+                const eaterTags = row.querySelectorAll('.eaters-selector .person-tag');
+                const payerTags = row.querySelectorAll('.payers-selector .person-tag');
+                
+                nameInput.addEventListener('input', (e) => {
+                    this.items[itemIndex].name = e.target.value;
+                    this.calculateItemized();
+                    this.saveData();
                 });
                 
-                return isValid;
+                priceInput.addEventListener('input', (e) => {
+                    this.items[itemIndex].price = parseFloat(e.target.value) || 0;
+                    this.calculateItemized();
+                    this.saveData();
+                });
+                
+                deleteBtn.addEventListener('click', () => {
+                    this.deleteItem(itemIndex);
+                });
+                
+                eaterTags.forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const personIndex = parseInt(e.target.dataset.personIndex);
+                        this.togglePersonSelection(itemIndex, personIndex, 'eaters');
+                    });
+                });
+                
+                payerTags.forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const personIndex = parseInt(e.target.dataset.personIndex);
+                        this.togglePersonSelection(itemIndex, personIndex, 'payers');
+                    });
+                });
             }
             
             roundToThousand(amount) {
@@ -882,7 +940,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const billSplitter = new BillSplitter();
+            new BillSplitter();
         });
     </script>
 </body>
