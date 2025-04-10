@@ -1603,6 +1603,24 @@
                 this.saveData(); // Save the new list of people
              }
 
+             addNewItem() {
+                const newItem = {
+                    name: '',
+                    price: '',
+                    eaters: [],
+                    payers: []
+                };
+                this.items.push(newItem);
+                this.refreshItemizedTable();
+                this.calculateItemized();
+                this.saveData();
+
+                const newIndex = this.items.length - 1;
+                const newRow = this.itemizedElements.itemsTable?.querySelector(`tr[data-index="${newIndex}"]`);
+                const nameInput = newRow?.querySelector('.item-name');
+                if (nameInput) nameInput.focus();
+             }
+
             // --- Formatting Helpers (Unchanged) ---
             roundToThousand(amount) { const n = parseFloat(amount); return isNaN(n) ? 0 : Math.round(n / 1000) * 1000; }
             formatCurrency(amount) { const n = parseFloat(amount); return isNaN(n) ? '0' : new Intl.NumberFormat('vi-VN').format(Math.round(n)); }
