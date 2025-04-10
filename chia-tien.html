@@ -131,7 +131,6 @@
             text-align: center;
             font-size: 0.95rem; /* Slightly smaller font for mobile tabs */
         }
-
         .tab-button:hover {
             background-color: var(--primary-light);
         }
@@ -200,8 +199,7 @@
             white-space: nowrap; /* Prevent header text wrapping */
         }
 
-        /* Form group styling (if using divs instead of table rows) */
-        /* Not strictly needed if tables are used, but demonstrates mobile-first */
+        /* Form group styling */
         .form-group {
             display: flex;
              /* Stack label/input by default */
@@ -212,7 +210,6 @@
 
         label {
              /* Style for labels within tables or form-groups */
-             /* margin-right: 0; */
             margin-bottom: 5px; /* Space between label and input when stacked */
             font-weight: 500; /* Slightly bolder labels */
             display: block; /* Ensure label takes its own line if needed */
@@ -239,20 +236,11 @@
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-             /* Optional: Add subtle shadow on focus */
-            /* box-shadow: 0 0 0 2px var(--primary-light); */
         }
 
         input[type="number"] {
-             /* Ensure number inputs are usable on mobile */
              -moz-appearance: textfield; /* Firefox */
         }
-        /* Optional: Hide spinners for number inputs */
-        /* input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        } */
 
         input.error {
             border-color: var(--error-color);
@@ -286,7 +274,6 @@
             color: var(--text-color);
             font-size: 0.9rem;
         }
-
         /* Result Display */
         .result {
             margin-top: 20px;
@@ -329,10 +316,8 @@
         }
         .transaction-text {
              /* Takes full width when stacked */
-             /* No extra styles needed for column layout */
         }
          .transaction-line .btn { /* Style button within transaction */
-             /* Use gap instead of margin */
              align-self: flex-start; /* Align button left */
          }
 
@@ -367,8 +352,12 @@
         .btn:hover {
             background-color: var(--primary-dark);
         }
-        /* Make buttons take full width sometimes if needed */
-        /* .btn-block { display: block; width: 100%; } */
+        /* Disable style */
+        .btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
 
         /* Smaller Buttons */
         .btn-sm {
@@ -385,21 +374,23 @@
         #itemizedForm {
             margin: 20px 0;
         }
-        /* Wrapper for itemized table for scrolling on mobile */
+        /* Wrapper for itemized table for scrolling on larger screens */
         .itemized-table-container {
             width: 100%;
-            overflow-x: auto; /* Enable horizontal scrolling */
+            overflow-x: auto; /* Enable horizontal scrolling initially */
             -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-             margin-bottom: 10px; /* Add space below scrolled table */
+             margin-bottom: 10px; /* Add space below table */
         }
         #itemsTable {
              /* Ensure table doesn't force container wider unnecessarily */
-             /* min-width: 500px; */ /* Set a min-width if needed, but overflow handles it */
+             /* min-width: 500px; */ /* Example min-width if needed */
         }
-        /* Adjust item table cell padding */
+        /* Adjust item table cell padding (applies generally) */
         #itemsTable th, #itemsTable td {
             padding: 8px 6px; /* Slightly tighter padding */
+            vertical-align: middle; /* Ensure vertical alignment */
         }
+        /* Column Width Hints (mostly for larger screens) */
         #itemsTable th:nth-child(1), /* Name */
         #itemsTable td:nth-child(1) {
             min-width: 100px; /* Give name some space */
@@ -421,7 +412,6 @@
              text-align: center;
         }
 
-
         #addItemBtn, #addPersonBtn {
             margin-bottom: 10px;
             margin-right: 5px;
@@ -436,7 +426,11 @@
             cursor: pointer;
             min-height: auto; /* Override default btn size */
             min-width: 30px;
+            line-height: 1; /* Ensure '✕' fits well */
         }
+         #itemsTable .delete-btn:hover {
+             background-color: #b02a37; /* Darker red */
+         }
 
         /* People Selector Tags */
         .people-selector {
@@ -455,12 +449,34 @@
             border: 1px solid var(--primary-color);
             white-space: nowrap; /* Prevent wrapping */
             line-height: 1.4; /* Improve vertical spacing */
+            transition: background-color 0.2s, color 0.2s;
         }
+         .person-tag:hover {
+            background-color: #dbeafe; /* Lighter blue on hover */
+         }
+        @media (prefers-color-scheme: dark) {
+             .person-tag {
+                background-color: #374151; /* Darker bg */
+                color: #9ca3af; /* Lighter text */
+                border-color: #4b5563; /* Slightly lighter border */
+             }
+             .person-tag:hover {
+                 background-color: #4b5563;
+             }
+        }
+
 
         .person-tag.selected {
             background-color: var(--primary-color);
             color: white;
         }
+         @media (prefers-color-scheme: dark) {
+            .person-tag.selected {
+                 background-color: var(--primary-color); /* Keep selected color */
+                 color: white;
+            }
+         }
+
 
         /* Payment Section */
         .payment-options-container {
@@ -480,9 +496,8 @@
 
         /* Payment Info Form (inside container) */
         #paymentOptions {
-            /* Display controlled by JS */
             padding: 15px;
-            background-color: white;
+            background-color: var(--container-bg); /* Use container bg for consistency */
             border-radius: var(--radius);
             margin-top: 20px; /* Spacing when shown */
         }
@@ -492,7 +507,7 @@
             text-align: center;
             margin-top: 20px;
             padding: 15px;
-            background-color: white; /* Use container bg or white */
+            background-color: var(--container-bg); /* Use container bg */
             border-radius: var(--radius);
             min-height: 150px; /* Placeholder height */
             display: none; /* Controlled by JS */
@@ -500,8 +515,7 @@
         }
         #qrCodeImage {
             display: block;
-            /* Adjust max-width for mobile */
-            max-width: 280px;
+            max-width: 280px; /* Limit size on mobile */
             width: 100%; /* Scale down if container is smaller */
             height: auto;
             margin: 10px auto 15px auto;
@@ -525,6 +539,128 @@
               flex-wrap: wrap; /* Allow actions to wrap on mobile */
          }
 
+        /* --- START: Mobile Table Stacking CSS --- */
+        /* Apply these styles only on smaller screens */
+        @media (max-width: 599px) { /* Adjust breakpoint as needed */
+
+            /* Hide the table header visually, but keep for accessibility */
+            #itemsTable thead {
+                border: none;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+            }
+
+            /* Make the table and rows behave like blocks */
+            .itemized-table-container {
+                overflow-x: hidden; /* Prevent scrolling container */
+            }
+
+            #itemsTable, #itemsTable tbody, #itemsTable tr {
+                display: block;
+                width: 100%;
+            }
+
+            #itemsTable tr {
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                margin-bottom: 15px; /* Space between item cards */
+                padding: 10px;
+                 background-color: var(--container-bg); /* Give rows a background */
+            }
+            /* Make cells stack and add labels */
+            #itemsTable td {
+                display: block;
+                text-align: right; /* Align content to the right */
+                padding-left: 40%; /* Make space for the label */
+                position: relative;
+                border-bottom: 1px dashed var(--border-color); /* Separator between fields */
+                padding-top: 8px;
+                padding-bottom: 8px;
+                min-height: 44px; /* Ensure tappable height */
+                 word-wrap: break-word; /* Allow long content in tags to wrap */
+            }
+
+            #itemsTable tr td:last-child { /* Remove border from last cell (delete button) */
+                border-bottom: none;
+            }
+
+            /* Use the data-label attribute to show the header text */
+            #itemsTable td::before {
+                content: attr(data-label); /* Display the label */
+                position: absolute;
+                left: 10px; /* Position label on the left */
+                width: calc(40% - 20px); /* Control label width */
+                text-align: left;
+                font-weight: bold;
+                color: var(--text-color);
+                white-space: nowrap; /* Prevent label wrapping */
+                /* Vertically center the label */
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            /* Specific adjustments for certain cells */
+            /* Input cells: Align input to left, label might need adjustment */
+            #itemsTable td[data-label="Món ăn"] input,
+            #itemsTable td[data-label^="Giá"] input { /* Use starts-with for "Giá" */
+                 text-align: left;
+                 width: 100%; /* Ensure input fills the cell */
+            }
+             #itemsTable td[data-label="Món ăn"]::before,
+             #itemsTable td[data-label^="Giá"]::before {
+                /* Adjust label position slightly if needed based on input height */
+                /* top: 10px; transform: none; */
+             }
+
+            /* People selector cells: Use GRID for 2 columns, aligned right */
+            #itemsTable td[data-label="Người ăn"] .people-selector,
+            #itemsTable td[data-label="Người trả"] .people-selector {
+                /* Change from flex to grid */
+                display: grid;
+                grid-template-columns: repeat(2, 1fr); /* Create 2 equal columns */
+
+                /* Keep gap */
+                gap: 5px;
+
+                /* Keep these for overall alignment within the table cell */
+                margin-left: auto;
+                max-width: 70%; /* Adjust if needed, controls the total width the grid takes */
+
+                /* Remove flex-specific alignment property */
+                /* justify-content: flex-end; */
+
+                /* Optional: Align items within their grid cell if needed */
+                /* justify-items: start; */ /* Aligns tags to the start of their column cell */
+            }
+
+            /* Ensure labels align with the start of the tag area */
+            #itemsTable td[data-label="Người ăn"]::before,
+            #itemsTable td[data-label="Người trả"]::before {
+                 top: 10px; /* Adjust top position if tags wrap */
+                 transform: none;
+            }
+
+            /* Delete button cell: Center button */
+            #itemsTable td[data-label="Xoá"] {
+                text-align: center; /* Center the delete button */
+                padding-left: 0; /* No label indent needed */
+                display: flex; /* Use flex to center */
+                justify-content: center;
+                align-items: center;
+            }
+            #itemsTable td[data-label="Xoá"]::before {
+                 display: none; /* Hide label for delete button cell */
+            }
+            #itemsTable td[data-label="Xoá"] button {
+                 /* Button already styled, maybe add margin if needed */
+            }
+        }
+        /* --- END: Mobile Table Stacking CSS --- */
         /* --- Media Query for Larger Screens (Tablet/Desktop) --- */
         /* Apply styles when screen width is 600px or wider */
         @media (min-width: 600px) {
@@ -564,11 +700,19 @@
                 text-align: right;
                 padding-right: 15px;
                 font-weight: 500;
+                 border-bottom: none; /* Remove border on label cells */
             }
             #takeawayForm table td:last-child,
             #dineInForm table td:last-child {
                 /* Input column takes remaining space */
+                border-bottom: 1px solid var(--border-color); /* Keep border on value cell */
             }
+             /* Ensure rows still have bottom border */
+             #takeawayForm table tr:last-child td:last-child,
+             #dineInForm table tr:last-child td:last-child {
+                 border-bottom: none;
+             }
+
              /* For payment options form-group layout */
             .form-group {
                  /* Switch back to horizontal layout */
@@ -609,12 +753,12 @@
              #qrActionsContainer {
                  flex-wrap: nowrap; /* Prevent actions wrapping */
              }
-             /* Remove horizontal scroll on itemized table if desired */
+             /* Restore horizontal scroll on itemized table if needed (already default) */
              .itemized-table-container {
-                 /* overflow-x: visible; */ /* Uncomment to disable scroll */
+                  overflow-x: auto; /* Ensure horizontal scroll is enabled */
              }
               /* #itemsTable {
-                 min-width: 0;
+                 min-width: 500px; // Restore min-width if needed
              } */
         }
 
@@ -636,11 +780,11 @@
 
         <!-- Takeaway Form -->
         <div id="takeawayForm" role="tabpanel" aria-labelledby="takeawayTab">
-            <!-- Using table for layout consistency with original -->
+            <!-- Using table for layout consistency -->
             <table>
                 <tbody>
                     <tr>
-                        <td><label for="foodCost">Tiền ăn (k)</label></td>
+                        <td><label for="foodCost">Tiền ăn</label></td>
                         <td>
                             <div class="input-wrapper">
                                 <input type="number" id="foodCost" placeholder="VND x1000. VD: 100" min="0" step="any" inputmode="decimal" aria-describedby="foodCostError">
@@ -649,7 +793,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><label for="shippingCost">Tiền ship (k)</label></td>
+                        <td><label for="shippingCost">Tiền ship</label></td>
                         <td>
                             <div class="input-wrapper">
                                 <input type="number" id="shippingCost" placeholder="VND x1000. VD: 15" min="0" step="any" inputmode="decimal" aria-describedby="shippingCostError">
@@ -658,7 +802,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><label for="discount">Giảm giá (k)</label></td>
+                        <td><label for="discount">Giảm giá</label></td>
                         <td>
                             <div class="input-wrapper">
                                 <input type="number" id="discount" placeholder="VND x1000. VD: 5" min="0" step="any" inputmode="decimal" aria-describedby="discountError">
@@ -681,13 +825,12 @@
                  <button id="openPaymentTakeaway" class="btn">Thanh toán</button>
              </div>
         </div>
-
         <!-- Dine-in Form -->
         <div id="dineInForm" role="tabpanel" aria-labelledby="dineInTab" style="display: none;">
             <table>
                  <tbody>
                     <tr>
-                        <td><label for="totalFoodCost">Tổng tiền ăn (k)</label></td>
+                        <td><label for="totalFoodCost">Tổng tiền ăn</label></td>
                         <td>
                             <div class="input-wrapper">
                                 <input type="number" id="totalFoodCost" placeholder="VND x1000. VD: 100" min="0" step="any" inputmode="decimal" aria-describedby="totalFoodCostError">
@@ -696,7 +839,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><label for="notEatenCost">Món k ăn chung (k)</label></td>
+                        <td><label for="notEatenCost">Món không ăn</label></td>
                         <td>
                             <div class="input-wrapper">
                                 <input type="number" id="notEatenCost" placeholder="VND x1000. VD: 0" min="0" step="any" inputmode="decimal" aria-describedby="notEatenCostError">
@@ -705,7 +848,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><label for="numDiners">Số người ăn (chung)</label></td>
+                        <td><label for="numDiners">Số người ăn</label></td>
                         <td>
                             <div class="input-wrapper">
                                 <input type="number" id="numDiners" placeholder="VD: 3" min="1" step="1" inputmode="numeric" aria-describedby="numDinersError">
@@ -719,7 +862,6 @@
                  <button id="openPaymentDineIn" class="btn">Thanh toán</button>
              </div>
         </div>
-
         <!-- Itemized Form -->
         <div id="itemizedForm" role="tabpanel" aria-labelledby="itemizedTab" style="display: none;">
              <!-- Buttons outside the scrollable table container -->
@@ -727,13 +869,13 @@
                 <button id="addItemBtn" class="btn btn-sm">+ Thêm món</button>
                 <button id="addPersonBtn" class="btn btn-sm">+ Thêm người</button>
             </div>
-             <!-- Div to allow horizontal scrolling on mobile -->
+             <!-- Div to allow horizontal scrolling on non-mobile screens -->
             <div class="itemized-table-container">
                 <table id="itemsTable">
                     <thead>
                         <tr>
                             <th>Món ăn</th>
-                            <th>Giá (k)</th> <!-- Shorter header -->
+                            <th>Giá</th> <!-- Shorter header -->
                             <th>Người ăn</th>
                             <th>Người trả</th>
                             <th>Xoá</th> <!-- Shorter header -->
@@ -813,11 +955,10 @@
             Created by quanganhdeptrai
         </div>
     </div> <!-- End of container -->
-
     <script>
         // Bank data array (remains the same)
-        const banks = [
-             {"id":17,"name":"Ngân hàng TMCP Công thương Việt Nam","code":"ICB","bin":"970415","shortName":"VietinBank"},
+        const banks = [ /* ... Bank data array is quite long, including it here ... */
+            {"id":17,"name":"Ngân hàng TMCP Công thương Việt Nam","code":"ICB","bin":"970415","shortName":"VietinBank"},
             {"id":43,"name":"Ngân hàng TMCP Ngoại Thương Việt Nam","code":"VCB","bin":"970436","shortName":"Vietcombank"},
             {"id":4,"name":"Ngân hàng TMCP Đầu tư và Phát triển Việt Nam","code":"BIDV","bin":"970418","shortName":"BIDV"},
             {"id":42,"name":"Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam","code":"VBA","bin":"970405","shortName":"Agribank"},
@@ -837,7 +978,7 @@
             {"id":22,"name":"Ngân hàng TMCP Hàng Hải","code":"MSB","bin":"970426","shortName":"MSB"},
             {"id":53,"name":"TMCP Việt Nam Thịnh Vượng - Ngân hàng số CAKE by VPBank","code":"CAKE","bin":"546034","shortName":"CAKE"},
             {"id":54,"name":"TMCP Việt Nam Thịnh Vượng - Ngân hàng số Ubank by VPBank","code":"Ubank","bin":"546035","shortName":"Ubank"},
-            {"id":58,"name":"Ngân hàng số Timo by Ban Viet Bank (Timo)","code":"TIMO","bin":"963388","shortName":"Timo"}, // Updated Name
+            {"id":58,"name":"Ngân hàng số Timo by Ban Viet Bank (Timo)","code":"TIMO","bin":"963388","shortName":"Timo"},
             {"id":57,"name":"Tổng Công ty Dịch vụ số Viettel - Chi nhánh tập đoàn công nghiệp viễn thông Quân Đội","code":"VTLMONEY","bin":"971005","shortName":"ViettelMoney"},
             {"id":56,"name":"VNPT Money","code":"VNPTMONEY","bin":"971011","shortName":"VNPTMoney"},
             {"id":34,"name":"Ngân hàng TMCP Sài Gòn Công Thương","code":"SGICB","bin":"970400","shortName":"SaigonBank"},
@@ -856,7 +997,7 @@
             {"id":52,"name":"Ngân hàng Hợp tác xã Việt Nam","code":"COOPBANK","bin":"970446","shortName":"COOPBANK"},
             {"id":20,"name":"Ngân hàng TMCP Lộc Phát Việt Nam","code":"LPB","bin":"970449","shortName":"LPBank"},
             {"id":19,"name":"Ngân hàng TMCP Kiên Long","code":"KLB","bin":"970452","shortName":"KienLongBank"},
-            {"id":55,"name":"Ngân hàng Đại chúng TNHH Kasikornbank (KBank)","code":"KBank","bin":"668888","shortName":"KBank"}, // Updated Name
+            {"id":55,"name":"Ngân hàng Đại chúng TNHH Kasikornbank (KBank)","code":"KBank","bin":"668888","shortName":"KBank"},
             {"id":50,"name":"Ngân hàng Kookmin - Chi nhánh Hà Nội","code":"KBHN","bin":"970462","shortName":"KookminHN"},
             {"id":60,"name":"Ngân hàng KEB Hana – Chi nhánh Thành phố Hồ Chí Minh","code":"KEBHANAHCM","bin":"970466","shortName":"KEBHanaHCM"},
             {"id":61,"name":"Ngân hàng KEB Hana – Chi nhánh Hà Nội","code":"KEBHANAHN","bin":"970467","shortName":"KEBHANAHN"},
@@ -889,12 +1030,17 @@
                 this.items = [];
                 this.lastCalculatedAmount = 0;
                 this.currentQrImageUrl = null;
+                // **FIX 2:** Add property to store the QR button being processed
+                this.currentTriggerButton = null;
 
                 this.initElements();
                 this.initPaymentElements();
-                this.loadSavedData(); // Load data first
-                this.initEventListeners();
-                this.populateBankSelect(); // Populate banks after loading potential saved selection
+
+                // **FIX 1:** Populate banks FIRST so options exist when loading saved data
+                this.populateBankSelect();
+                // Now load data AFTER banks are populated
+                this.loadSavedData();
+                this.initEventListeners(); // Initialize general listeners
                 this.switchTab(this.activeTab); // Switch to loaded or default tab + run initial calculation
             }
 
@@ -960,7 +1106,8 @@
                     qrLoadingText: document.getElementById('qrLoadingText'),
                     qrInfoText: document.getElementById('qrInfoText')
                 };
-                this.initPaymentEventListeners(); // Initialize listeners specific to payment
+                // Initialize listeners specific to payment (now separated)
+                this.initPaymentEventListeners();
             }
 
             initPaymentEventListeners() {
@@ -974,7 +1121,6 @@
                     if (this.activeTab === 'takeaway' || this.activeTab === 'dineIn') {
                          this.generateVietQR(this.lastCalculatedAmount, 'Tổng thanh toán', event.target);
                     } else {
-                         // Button should be hidden/disabled anyway, but good to have fallback logic
                         alert('Sử dụng nút "Tạo QR" bên cạnh mỗi giao dịch để tạo mã QR cho tab này.');
                     }
                 });
@@ -991,15 +1137,11 @@
                          const description = transactionTextElement ? transactionTextElement.textContent.split(':')[0].trim() : 'Thanh toán món'; // Extract 'A transfers to B' part
 
                          if (!isNaN(amount) && amount > 0) {
-                             // Check if payment info is filled *before* generating QR
                               if (!this.paymentElements.accountNo.value || !this.paymentElements.accountName.value || !this.paymentElements.bankSelect.value) {
                                  this.togglePaymentOptions(true); // Show the form if hidden
                                  alert('Vui lòng nhập đầy đủ thông tin ngân hàng người nhận trước khi tạo QR.');
-                                 // Scroll to payment options for user convenience
                                  this.paymentElements.paymentOptions.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
                              } else {
-                                 // Generate QR with specific description from transaction line
                                  this.generateVietQR(amount, description, qrButton);
                              }
                          } else {
@@ -1016,12 +1158,24 @@
                      this.paymentElements.qrCodeImage.style.display = 'none';
                      this.currentQrImageUrl = null; // Invalidate current URL
                      this.clearQrActions(); // Remove share/save buttons
+
+                     // **FIX 2:** Re-enable the original trigger button even on error
+                     if (this.currentTriggerButton) {
+                         this.toggleLoadingState(false, this.currentTriggerButton);
+                         this.currentTriggerButton = null; // Clear after use
+                     }
                 };
 
                  this.paymentElements.qrCodeImage.onload = () => {
                      this.paymentElements.qrLoadingText.style.display = 'none'; // Hide loading text
                      this.paymentElements.qrCodeImage.style.display = 'block'; // Show image
                      this.addQrActions(); // Add Share/Save buttons
+
+                     // **FIX 2:** Re-enable the original trigger button on success
+                     if (this.currentTriggerButton) {
+                         this.toggleLoadingState(false, this.currentTriggerButton);
+                         this.currentTriggerButton = null; // Clear after use
+                     }
                  };
             }
 
@@ -1038,7 +1192,6 @@
                         this.saveData();
                     }, 300));
                 });
-
                 Object.values(this.dineInInputs).forEach(input => {
                     input.addEventListener('input', this.debounce(() => {
                         this.calculateDineIn();
@@ -1064,7 +1217,7 @@
                     input.addEventListener('input', this.debounce(() => { // Debounce slightly to avoid rapid state changes
                          this.updateGenerateQRButtonState();
                          this.saveData();
-                     }, 200));
+                     }, 200)); // Debounce for 200ms is reasonable here
                 });
 
                  // Initial state for the main QR button after loading data
@@ -1080,184 +1233,163 @@
                  const hasValidAmount = this.lastCalculatedAmount > 0;
 
                  if (isTotalTab) {
-                     // Show and enable/disable the main button based on filled inputs and valid amount
                      this.paymentElements.generateBankQR.style.display = ''; // Show button
                      this.paymentElements.generateBankQR.disabled = !(inputsFilled && hasValidAmount);
                      this.paymentElements.generateBankQR.textContent = 'Tạo QR Thanh toán (Tổng)';
                  } else {
-                     // Hide the main button on the itemized tab
                      this.paymentElements.generateBankQR.style.display = 'none'; // Hide button
                      this.paymentElements.generateBankQR.disabled = true; // Always disabled when hidden
-                     // Optional: Change text when hidden for clarity if needed
-                     // this.paymentElements.generateBankQR.textContent = 'Dùng nút "Tạo QR" ở trên';
                  }
              }
 
             populateBankSelect() {
                 const select = this.paymentElements.bankSelect;
-                const currentVal = select.value; // Store potentially loaded value
+                const currentVal = select.value; // Store potentially loaded value before clearing
                 select.innerHTML = '<option value="" disabled>Chọn ngân hàng</option>'; // Add disabled default option
-                // Sort banks alphabetically by shortName for better usability
                 banks.sort((a, b) => a.shortName.localeCompare(b.shortName)).forEach(bank => {
                     const option = document.createElement('option');
                     option.value = bank.bin;
                     option.textContent = `${bank.shortName} - ${bank.name}`;
                     select.appendChild(option);
                 });
-                 // Restore selected value if it existed
-                 if (currentVal) {
+                 // Restore value if it existed and is valid after population
+                 if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
                      select.value = currentVal;
                  }
-                 // Ensure the default "Chọn ngân hàng" is selected if no value/invalid value was loaded
+                 // If no value is selected (either not loaded or invalid), select the placeholder
                  if (!select.value) {
                     select.selectedIndex = 0;
                  }
             }
 
-            // --- VietQR Generation Logic (Using Image URL) ---
+            // --- VietQR Generation Logic ---
             generateVietQR(amount, description = 'Thanh toan', triggerButton = null) {
-                // Basic amount validation
                 if (!amount || amount <= 0 || isNaN(amount)) {
                     alert('Số tiền không hợp lệ để tạo QR.');
-                    if (triggerButton) this.toggleLoadingState(false, triggerButton); // Reset button state if applicable
+                    // Ensure button is re-enabled if validation fails early
+                    if (triggerButton) this.toggleLoadingState(false, triggerButton);
                     return;
                 }
 
-                // Ensure payment form is visible if generating QR from itemized list and form is hidden
-                // Also useful if user clicks generate on Takeaway/Dine-in before opening payment section
-                if (this.paymentElements.paymentOptions.style.display === 'none') {
-                    this.togglePaymentOptions(true); // Show the payment form
+                // Show payment form if hidden and needed for itemized QR
+                if (this.activeTab === 'itemized' && this.paymentElements.paymentOptions.style.display === 'none') {
+                    this.togglePaymentOptions(true);
                 }
 
-                // Get and validate bank details from the form
                 const bankDetails = {
                     accountNo: this.paymentElements.accountNo.value.trim(),
-                    accountName: this.paymentElements.accountName.value.trim().toUpperCase(), // Convert to uppercase as per VietQR recommendation
+                    accountName: this.paymentElements.accountName.value.trim().toUpperCase(),
                     acqId: this.paymentElements.bankSelect.value, // BIN
-                     // Clean up description: remove amounts, limit length, ensure fallback
-                     addInfo: description.replace(/:.*$/, '').trim().substring(0, 25) || 'Thanh toan'
+                    addInfo: description.replace(/:.*$/, '').trim().substring(0, 25) || 'Thanh toan'
                 };
 
                  let errors = [];
                 if (!bankDetails.acqId) errors.push("Vui lòng chọn ngân hàng.");
                 if (!bankDetails.accountNo || !/^\d+$/.test(bankDetails.accountNo)) errors.push("Số tài khoản không hợp lệ (chỉ chứa số).");
-                // Basic name validation (exists, reasonable length)
                 if (!bankDetails.accountName || bankDetails.accountName.length < 2 || bankDetails.accountName.length > 50) errors.push("Tên tài khoản không hợp lệ (cần nhập, không quá dài).");
 
-                if (errors.length > 0) {
+                 if (errors.length > 0) {
                     alert("Lỗi thông tin thanh toán:\n- " + errors.join("\n- "));
-                    this.paymentElements.accountNo.focus(); // Focus first field likely needing correction
+                    this.paymentElements.accountNo.focus();
+                    // Ensure button is re-enabled if validation fails
                     if (triggerButton) this.toggleLoadingState(false, triggerButton);
                     return;
                 }
 
-                // Find the bank's code needed for the image URL
                 const selectedBank = banks.find(bank => bank.bin === bankDetails.acqId);
                  if (!selectedBank || !selectedBank.code) {
                     alert('Không tìm thấy thông tin mã ngân hàng (code) hợp lệ cho ngân hàng đã chọn.');
+                     // Ensure button is re-enabled on error
                     if (triggerButton) this.toggleLoadingState(false, triggerButton);
                     return;
                 }
-
-                // Prepare parameters for the VietQR Image API
                 const bankImgCode = selectedBank.code;
-                const template = 'compact2'; // Using a common, clean template
+                const template = 'compact2';
                 const encodedAccountName = encodeURIComponent(bankDetails.accountName);
                  const encodedAddInfo = encodeURIComponent(bankDetails.addInfo);
-                const integerAmount = Math.round(amount); // API requires integer amount
+                const integerAmount = Math.round(amount); // API requires integer
 
-                // Construct the image URL
                 const qrImageUrl = `https://img.vietqr.io/image/${bankImgCode}-${bankDetails.accountNo}-${template}.png?amount=${integerAmount}&addInfo=${encodedAddInfo}&accountName=${encodedAccountName}`;
-                this.currentQrImageUrl = qrImageUrl; // Store for potential share/save
+                this.currentQrImageUrl = qrImageUrl;
 
                 console.log("Generating VietQR Image URL:", qrImageUrl);
 
-                // Update UI: Show loading, then image
-                if (triggerButton) this.toggleLoadingState(true, triggerButton); // Show loading state on the button
-                this.paymentElements.qrCodeContainer.style.display = 'block'; // Show the QR container
+                // Disable button and store reference
+                if (triggerButton) this.toggleLoadingState(true, triggerButton);
+                // **FIX 2:** Store the button reference HERE
+                this.currentTriggerButton = triggerButton;
+
+                // Start loading UI updates
+                this.paymentElements.qrCodeContainer.style.display = 'block';
                 this.paymentElements.qrLoadingText.textContent = 'Đang tải mã QR...';
-                this.paymentElements.qrLoadingText.style.display = 'block'; // Show loading text
-                this.paymentElements.qrCodeImage.style.display = 'none'; // Hide old image/placeholder
-                this.clearQrActions(); // Remove old Share/Save buttons
-                this.paymentElements.qrCodeImage.src = qrImageUrl; // Set the src to trigger load/error handlers
+                this.paymentElements.qrLoadingText.style.display = 'block';
+                this.paymentElements.qrCodeImage.style.display = 'none';
+                this.clearQrActions();
+                this.paymentElements.qrCodeImage.src = qrImageUrl; // Trigger onload/onerror
                 this.paymentElements.qrAmount.textContent = `${this.formatCurrency(integerAmount)} VND`;
-                // Update helper text to show context of the generated QR
                  this.paymentElements.qrInfoText.textContent = `(Mã QR cho ${description}: ${this.formatCurrency(integerAmount)} VND)`;
 
-                // Scroll the QR code into view for better visibility on mobile
                 this.paymentElements.qrCodeContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                 // Note: Loading state on triggerButton is turned off in the image's onload/onerror handlers
+                // Note: Button re-enabling now happens in qrCodeImage.onload/onerror handlers
             }
 
             // --- Add Share/Save Buttons under QR Code ---
              addQrActions() {
-                this.clearQrActions(); // Ensure no duplicate buttons
-
+                this.clearQrActions();
                 if (!this.currentQrImageUrl || !this.paymentElements.qrCodeContainer) return;
 
-                // Extract amount and description context from the displayed QR info
                  const integerAmount = Math.round(parseFloat(this.paymentElements.qrAmount.textContent.replace(/[^\d]/g, '')) || 0);
-                const paymentText = this.paymentElements.qrInfoText.textContent.replace(/^\(|\)$/g, ''); // Get descriptive text, remove parentheses
+                const paymentText = this.paymentElements.qrInfoText.textContent.replace(/^\(|\)$/g, '');
 
-                // Create container for action buttons
                 const qrActionsContainer = document.createElement('div');
-                qrActionsContainer.id = 'qrActionsContainer'; // Use ID for easy removal
+                qrActionsContainer.id = 'qrActionsContainer';
 
-                // --- Share Button ---
                 const shareButton = document.createElement('button');
                 shareButton.id = 'shareQrCode';
-                shareButton.className = 'btn btn-sm btn-qr-action'; // Use smaller button style
-                shareButton.textContent = 'Chia sẻ'; // Shorter text for mobile
+                shareButton.className = 'btn btn-sm btn-qr-action';
+                shareButton.textContent = 'Chia sẻ';
                 shareButton.title = 'Chia sẻ mã QR này';
                 shareButton.addEventListener('click', async () => {
                      if (!this.currentQrImageUrl) { alert('Không có mã QR để chia sẻ.'); return; }
-                     this.toggleLoadingState(true, shareButton, 'Chia sẻ'); // Show loading on share button
+                     this.toggleLoadingState(true, shareButton, 'Chia sẻ');
                      try {
-                         // Fetch the QR image as a blob
                          const response = await fetch(this.currentQrImageUrl);
                          if (!response.ok) throw new Error(`Tải ảnh thất bại (${response.status})`);
                          const blob = await response.blob();
                          const file = new File([blob], 'VietQR.png', { type: blob.type });
 
-                         // Use Web Share API if available
                          if (navigator.canShare && navigator.canShare({ files: [file] })) {
                              await navigator.share({ title: 'Mã QR Thanh Toán', text: paymentText, files: [file] });
-                         } else if (navigator.share) { // Fallback for text/URL sharing
+                         } else if (navigator.share) {
                              await navigator.share({ title: 'Mã QR Thanh Toán', text: `${paymentText}\nLink ảnh: ${this.currentQrImageUrl}` });
                          } else {
                              alert('Chia sẻ không được hỗ trợ trên trình duyệt/thiết bị này. Bạn có thể thử Lưu QR và gửi ảnh.');
                          }
                      } catch (error) {
                          console.error('Lỗi khi chia sẻ:', error);
-                         // Don't alert if user cancelled share dialog (AbortError)
                          if (error.name !== 'AbortError') {
                             alert(`Không thể chia sẻ QR. Lỗi: ${error.message}. Thử lưu và gửi ảnh thủ công.`);
                          }
                      } finally {
-                        this.toggleLoadingState(false, shareButton, 'Chia sẻ'); // Hide loading on share button
+                        this.toggleLoadingState(false, shareButton, 'Chia sẻ');
                      }
                 });
-
-                // --- Save Button ---
                 const saveButton = document.createElement('button');
                 saveButton.id = 'saveQrCode';
-                saveButton.className = 'btn btn-sm btn-qr-action'; // Use smaller button style
+                saveButton.className = 'btn btn-sm btn-qr-action';
                 saveButton.textContent = 'Lưu QR';
                 saveButton.title = 'Tải mã QR này về máy';
                 saveButton.addEventListener('click', () => {
                     if (!this.currentQrImageUrl) { alert('Không có mã QR để lưu.'); return; }
-                     this.toggleLoadingState(true, saveButton, 'Lưu QR'); // Show loading on save button
+                     this.toggleLoadingState(true, saveButton, 'Lưu QR');
                     try {
                         const link = document.createElement('a');
                         link.href = this.currentQrImageUrl;
-                        // Create a descriptive filename
                         const bankName = banks.find(b => b.bin === this.paymentElements.bankSelect.value)?.shortName || 'Bank';
                         const accNoLast4 = this.paymentElements.accountNo.value.slice(-4);
                         const filename = `VietQR_${bankName}_${accNoLast4}_${integerAmount}.png`;
                         link.download = filename;
-
-                        // Trigger download
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
@@ -1265,19 +1397,17 @@
                         console.error('Lỗi khi lưu QR:', error);
                         alert('Không thể tự động lưu QR. Bạn có thể thử nhấn giữ vào ảnh QR và chọn "Lưu ảnh".');
                     } finally {
-                         this.toggleLoadingState(false, saveButton, 'Lưu QR'); // Hide loading on save button
+                         this.toggleLoadingState(false, saveButton, 'Lưu QR');
                     }
                 });
 
                 qrActionsContainer.appendChild(shareButton);
                 qrActionsContainer.appendChild(saveButton);
-
-                // Append the actions container below the QR info text within the QR container
                 this.paymentElements.qrInfoText.insertAdjacentElement('afterend', qrActionsContainer);
              }
 
              clearQrActions() {
-                 const existingActions = document.getElementById('qrActionsContainer'); // Use global ID defined above
+                 const existingActions = document.getElementById('qrActionsContainer');
                  if (existingActions) {
                      existingActions.remove();
                  }
@@ -1286,28 +1416,20 @@
             // Helper to toggle loading state on buttons
             toggleLoadingState(isLoading, button, originalText = null) {
                  if (!button) return;
-
-                 // Store original text if entering loading state
+                 // Store original text only when starting loading
                  if (isLoading && !button.dataset.originalText) {
                       button.dataset.originalText = button.textContent;
                  }
-                 // Retrieve original text if stored, otherwise guess based on class or default
-                 if (!originalText && !isLoading && button.dataset.originalText) {
-                     originalText = button.dataset.originalText;
-                 } else if (!originalText) {
-                     // Basic fallback if original text wasn't stored properly
-                     originalText = button.classList.contains('generate-transaction-qr') ? 'Tạo QR' :
-                                   (button.id === 'generateBankQR' ? 'Tạo QR Thanh toán (Tổng)' :
-                                   (button.id === 'shareQrCode' ? 'Chia sẻ' :
-                                   (button.id === 'saveQrCode' ? 'Lưu QR' : '...')));
+                 // Determine the text to restore to
+                 if (!isLoading) {
+                      originalText = button.dataset.originalText || button.textContent; // Use stored or current if none stored
                  }
 
                  const loadingText = '...'; // Simple loading indicator
-
                  button.disabled = isLoading;
                  button.textContent = isLoading ? loadingText : originalText;
 
-                 // Clean up stored text when exiting loading state
+                 // Clear stored text when finished loading
                  if (!isLoading) {
                      delete button.dataset.originalText;
                  }
@@ -1315,101 +1437,81 @@
             // --- End VietQR ---
 
             switchTab(tabName) {
-                if (!this.tabs[tabName]) return; // Ignore invalid tab names
+                if (!this.tabs[tabName]) return;
 
                 this.activeTab = tabName;
 
-                // Update tab button styles and ARIA attributes
                 Object.entries(this.tabs).forEach(([name, element]) => {
                     element.classList.toggle('active', name === tabName);
                     element.setAttribute('aria-selected', name === tabName ? 'true' : 'false');
                 });
 
-                // Show/hide corresponding form sections
                 Object.entries(this.forms).forEach(([name, element]) => {
                     element.style.display = name === tabName ? 'block' : 'none';
                 });
 
-                // Show/hide the itemized-specific payment trigger button
                  this.itemizedElements.itemizedPaymentTrigger.style.display = tabName === 'itemized' ? 'flex' : 'none';
 
-                // Reset calculation results display areas
                 this.resultElements.amountToPay.textContent = '';
                 this.resultElements.additionalInfo.innerHTML = '';
-                this.resultElements.itemizedResultDetails.innerHTML = ''; // Clear specific itemized results
+                this.resultElements.itemizedResultDetails.innerHTML = '';
                 this.resultElements.progressBar.style.width = '0%';
                 this.resultElements.progressText.textContent = '';
 
-                 // Hide QR section when switching tabs (it will regenerate if needed)
-                 this.paymentElements.qrCodeContainer.style.display = 'none';
-                 this.clearQrActions();
-                 this.currentQrImageUrl = null;
+                 // Hide QR when switching tabs
+                 if (this.paymentElements.qrCodeContainer.style.display !== 'none') {
+                    this.paymentElements.qrCodeContainer.style.display = 'none';
+                    this.clearQrActions();
+                    this.currentQrImageUrl = null;
+                 }
 
-                // Recalculate based on the newly active tab's current input values
+                // Re-calculate for the newly active tab
                 if (tabName === 'takeaway') this.calculateTakeaway();
                 else if (tabName === 'dineIn') this.calculateDineIn();
                 else if (tabName === 'itemized') this.calculateItemized();
-                 // Note: calculations also update lastCalculatedAmount
 
-                 // Update the state (visibility/disabled) of the main "Generate QR" button
-                 this.updateGenerateQRButtonState();
-
-                 // Save the current state including the active tab
-                 this.saveData();
+                 this.updateGenerateQRButtonState(); // Update main QR button state for the new tab
+                 this.saveData(); // Save the new active tab state
             }
 
             // --- Calculation Logic ---
             calculateTakeaway() {
                 if (this.activeTab !== 'takeaway') return;
 
-                // Get values, default to 0 if invalid/empty, convert 'k' to actual value
                 const foodCost = (parseFloat(this.takeawayInputs.foodCost.value) || 0) * 1000;
                 const shippingCost = (parseFloat(this.takeawayInputs.shippingCost.value) || 0) * 1000;
                 const discount = (parseFloat(this.takeawayInputs.discount.value) || 0) * 1000;
-                const numPeople = parseInt(this.takeawayInputs.numPeople.value) || 1; // Default to 1 person if invalid/empty
+                const numPeople = parseInt(this.takeawayInputs.numPeople.value) || 1;
 
-                 // Validate inputs (optional: add visual error state to inputs)
-                 // Basic check: ensure number of people is positive
                  const isValid = numPeople > 0;
-
-                const totalCost = Math.max(0, foodCost + shippingCost - discount); // Ensure total isn't negative
+                const totalCost = Math.max(0, foodCost + shippingCost - discount);
                 let amountPerPerson = isValid ? totalCost / numPeople : 0;
                 const roundedAmount = this.roundToThousand(amountPerPerson);
+                this.lastCalculatedAmount = roundedAmount; // Store the rounded amount used for display/QR
 
-                this.lastCalculatedAmount = roundedAmount; // Store for potential QR generation
-
-                // Update result display
                 this.resultElements.amountToPay.textContent = this.formatCurrency(roundedAmount) + ' / người';
 
-                // Update progress bar and text
                 let progressPercentage = 0;
                 const totalBeforeDiscount = foodCost + shippingCost;
                 if (totalBeforeDiscount > 0) {
-                    // Progress represents the final cost relative to the cost before discount
-                    progressPercentage = (totalCost / totalBeforeDiscount) * 100;
-                    // Clamp percentage between 0 and 100
-                    progressPercentage = Math.max(0, Math.min(progressPercentage, 100));
+                    progressPercentage = Math.max(0, Math.min((totalCost / totalBeforeDiscount) * 100, 100));
                 }
                 this.resultElements.progressBar.style.width = `${progressPercentage}%`;
                 this.resultElements.progressText.textContent =
                     `Tổng cộng: ${this.formatCurrency(totalCost)} / ${numPeople} người`;
 
-                // Update additional info (breakdown)
                 this.resultElements.additionalInfo.innerHTML =
                     `Chính xác: ${this.formatCurrency(amountPerPerson)}<br>` +
                     `(Ăn ${this.formatCurrency(foodCost)} + Ship ${this.formatCurrency(shippingCost)} - Giảm ${this.formatCurrency(discount)}) / ${numPeople} người`;
 
-                 this.resultElements.itemizedResultDetails.innerHTML = ''; // Ensure itemized area is clear
+                 this.resultElements.itemizedResultDetails.innerHTML = '';
+                 this.updateGenerateQRButtonState();
 
-                 this.updateGenerateQRButtonState(); // Update main QR button availability
-
-                 // Hide QR if amount becomes zero or invalid after calculation
-                 if (this.lastCalculatedAmount <= 0) {
-                     if (this.paymentElements.qrCodeContainer.style.display !== 'none') {
-                         this.paymentElements.qrCodeContainer.style.display = 'none';
-                         this.clearQrActions();
-                         this.currentQrImageUrl = null;
-                     }
+                 // Hide QR if calculation results in 0 or less
+                 if (this.lastCalculatedAmount <= 0 && this.paymentElements.qrCodeContainer.style.display !== 'none') {
+                     this.paymentElements.qrCodeContainer.style.display = 'none';
+                     this.clearQrActions();
+                     this.currentQrImageUrl = null;
                  }
             }
 
@@ -1421,84 +1523,69 @@
                 const numDiners = parseInt(this.dineInInputs.numDiners.value) || 1;
 
                 const isValid = numDiners > 0 && totalFoodCost >= notEatenCost;
-
                 const foodCostToSplit = Math.max(0, totalFoodCost - notEatenCost);
                 let amountPerPerson = isValid ? foodCostToSplit / numDiners : 0;
                 const roundedAmount = this.roundToThousand(amountPerPerson);
 
-                 this.lastCalculatedAmount = roundedAmount; // Store for potential QR generation
+                 this.lastCalculatedAmount = roundedAmount;
 
-                // Update result display
                 this.resultElements.amountToPay.textContent = this.formatCurrency(roundedAmount) + ' / người';
 
-                // Update progress bar and text
                 let progressPercentage = 0;
                 if (totalFoodCost > 0) {
-                     // Progress represents the portion of the bill being split commonly
-                    progressPercentage = (foodCostToSplit / totalFoodCost) * 100;
-                    progressPercentage = Math.max(0, Math.min(progressPercentage, 100));
+                    progressPercentage = Math.max(0, Math.min((foodCostToSplit / totalFoodCost) * 100, 100));
                 }
                 this.resultElements.progressBar.style.width = `${progressPercentage}%`;
                 this.resultElements.progressText.textContent =
                     `Tiền chung: ${this.formatCurrency(foodCostToSplit)} / ${numDiners} người (Tổng bill ${this.formatCurrency(totalFoodCost)})`;
 
-                // Update additional info (breakdown)
                 this.resultElements.additionalInfo.innerHTML =
                     `Chính xác: ${this.formatCurrency(amountPerPerson)}<br>` +
                     `((Tổng ${this.formatCurrency(totalFoodCost)} - Không ăn chung ${this.formatCurrency(notEatenCost)}) / ${numDiners} người)`;
 
-                 this.resultElements.itemizedResultDetails.innerHTML = ''; // Ensure itemized area is clear
-                 this.updateGenerateQRButtonState(); // Update main QR button availability
+                 this.resultElements.itemizedResultDetails.innerHTML = '';
+                 this.updateGenerateQRButtonState();
 
-                 // Hide QR if amount becomes zero or invalid
-                 if (this.lastCalculatedAmount <= 0) {
-                      if (this.paymentElements.qrCodeContainer.style.display !== 'none') {
-                         this.paymentElements.qrCodeContainer.style.display = 'none';
-                         this.clearQrActions();
-                         this.currentQrImageUrl = null;
-                      }
+                 // Hide QR if calculation results in 0 or less
+                 if (this.lastCalculatedAmount <= 0 && this.paymentElements.qrCodeContainer.style.display !== 'none') {
+                      this.paymentElements.qrCodeContainer.style.display = 'none';
+                      this.clearQrActions();
+                      this.currentQrImageUrl = null;
                  }
             }
 
             // --- Itemized Tab Logic ---
             addNewItem() {
                 const itemIndex = this.items.length;
-                // Initialize with empty strings/arrays
                 const newItem = { name: '', price: '', eaters: [], payers: [] };
                 this.items.push(newItem);
-
-                 // Create and append the new row element
                 const row = document.createElement('tr');
-                row.dataset.index = itemIndex; // Store index on the row for later reference
+                row.dataset.index = itemIndex;
+                // *** Added data-label attributes for mobile stacking ***
                 row.innerHTML = `
-                    <td><input type="text" class="item-name" value="" placeholder="Tên món ${itemIndex + 1}"></td>
-                    <td><input type="number" class="item-price" value="" min="0" step="any" inputmode="decimal" placeholder="Giá (k)"></td>
-                    <td><div class="people-selector eaters-selector" data-index="${itemIndex}">${this.renderPeopleSelector(itemIndex, 'eaters')}</div></td>
-                    <td><div class="people-selector payers-selector" data-index="${itemIndex}">${this.renderPeopleSelector(itemIndex, 'payers')}</div></td>
-                    <td><button class="delete-btn btn btn-sm" data-index="${itemIndex}" aria-label="Xoá món ${itemIndex + 1}">✕</button></td>
+                    <td data-label="Món ăn"><input type="text" class="item-name" value="" placeholder="Tên món ${itemIndex + 1}"></td>
+                    <td data-label="Giá"><input type="number" class="item-price" value="" min="0" step="any" inputmode="decimal" placeholder="Giá"></td>
+                    <td data-label="Người ăn"><div class="people-selector eaters-selector" data-index="${itemIndex}">${this.renderPeopleSelector(itemIndex, 'eaters')}</div></td>
+                    <td data-label="Người trả"><div class="people-selector payers-selector" data-index="${itemIndex}">${this.renderPeopleSelector(itemIndex, 'payers')}</div></td>
+                    <td data-label="Xoá"><button class="delete-btn btn btn-sm" data-index="${itemIndex}" aria-label="Xoá món ${itemIndex + 1}">✕</button></td>
                 `;
 
                 this.itemizedElements.itemsTable.appendChild(row);
-                this.attachItemEventListeners(row, itemIndex); // Attach listeners to the new row's elements
+                this.attachItemEventListeners(row, itemIndex);
 
-                 // Focus the name input of the newly added item for quick entry
                  const nameInput = row.querySelector('.item-name');
                  if(nameInput) nameInput.focus();
 
-                this.calculateItemized(); // Recalculate (though likely 0 until price/people are set)
-                 // Note: Saving happens in the event listeners for inputs/selections
+                this.calculateItemized();
+                // Saving happens in listeners attached by attachItemEventListeners
             }
 
-            // Renders the HTML for person selection tags (eaters or payers) for a specific item
             renderPeopleSelector(itemIndex, type = 'eaters') {
                 const item = this.items[itemIndex];
-                if (!item) return ''; // Should not happen, but safety check
-
-                // Ensure the target property (eaters/payers) is an array
+                if (!item) return '';
                 const selectedIndices = (type === 'eaters' ? item.eaters : item.payers) || [];
                 const validIndices = Array.isArray(selectedIndices) ? selectedIndices : [];
 
-                // Map through the global list of people, creating a tag for each
                 return this.people.map((person, personIndex) => {
                     const isSelected = validIndices.includes(personIndex);
                     return `<span class="person-tag ${isSelected ? 'selected' : ''}"
@@ -1508,234 +1595,179 @@
                                   data-item-index="${itemIndex}"
                                   data-person-index="${personIndex}"
                                   data-type="${type}">${person}</span>`;
-                }).join(''); // Join the HTML strings
+                }).join('');
             }
 
-            // Attaches event listeners (click, keydown) to all person tags within a given container div
              attachSelectorEventListeners(selectorContainer) {
                  selectorContainer.querySelectorAll('.person-tag').forEach(tag => {
-                     // Remove potentially old listeners first to prevent duplicates if re-rendering
-                     tag.removeEventListener('click', this.handlePersonTagClick);
-                     tag.removeEventListener('keydown', this.handlePersonTagKeydown);
-                     // Add new listeners, binding `this` correctly
-                     tag.addEventListener('click', this.handlePersonTagClick.bind(this));
-                     tag.addEventListener('keydown', this.handlePersonTagKeydown.bind(this));
+                     // Remove old listeners before adding new ones to prevent duplicates
+                     tag.removeEventListener('click', this.boundHandlePersonTagClick);
+                     tag.removeEventListener('keydown', this.boundHandlePersonTagKeydown);
+                     // Store bound handlers if not already done
+                     if (!this.boundHandlePersonTagClick) this.boundHandlePersonTagClick = this.handlePersonTagClick.bind(this);
+                     if (!this.boundHandlePersonTagKeydown) this.boundHandlePersonTagKeydown = this.handlePersonTagKeydown.bind(this);
+                     // Add the bound handlers
+                     tag.addEventListener('click', this.boundHandlePersonTagClick);
+                     tag.addEventListener('keydown', this.boundHandlePersonTagKeydown);
                  });
              }
 
-             // Handles clicks on person tags
              handlePersonTagClick(event) {
                  const tag = event.target.closest('.person-tag');
                  if (!tag) return;
-                 // Retrieve data attributes needed to identify the tag's context
                  const itemIndex = parseInt(tag.dataset.itemIndex);
                  const personIndex = parseInt(tag.dataset.personIndex);
-                 const type = tag.dataset.type; // 'eaters' or 'payers'
+                 const type = tag.dataset.type;
 
-                 if (isNaN(itemIndex) || isNaN(personIndex) || !type) {
-                     console.error("Missing or invalid data attributes on person tag:", tag.dataset);
-                     return;
-                 }
-                 // Call the core logic to toggle selection state
+                 if (isNaN(itemIndex) || isNaN(personIndex) || !type) return;
                  this.togglePersonSelection(itemIndex, personIndex, type);
              }
 
-             // Handles keyboard interaction (Enter/Space) on person tags for accessibility
              handlePersonTagKeydown(event) {
                  if (event.key === 'Enter' || event.key === ' ') {
-                     event.preventDefault(); // Prevent default action (e.g., page scroll on Space)
-                     this.handlePersonTagClick(event); // Treat Enter/Space same as a click
+                     event.preventDefault(); // Prevent scrolling on Space
+                     this.handlePersonTagClick(event); // Treat Enter/Space as click
                  }
              }
 
-            // Toggles a person's selection status (eater/payer) for a specific item
             togglePersonSelection(itemIndex, personIndex, type = 'eaters') {
                  const item = this.items[itemIndex];
-                 if (!item) return; // Safety check
+                 if (!item) return;
 
-                 // Ensure the target array (eaters/payers) exists and is an array
+                 // Ensure arrays exist
                  if (type === 'eaters') {
                      item.eaters = Array.isArray(item.eaters) ? item.eaters : [];
                  } else {
                      item.payers = Array.isArray(item.payers) ? item.payers : [];
                  }
                  const targetArray = type === 'eaters' ? item.eaters : item.payers;
-
-                 // Check if the person is already selected
                  const personPosition = targetArray.indexOf(personIndex);
 
                  if (personPosition === -1) {
-                     // Not selected: Add the person's index
                      targetArray.push(personIndex);
                  } else {
-                     // Already selected: Remove the person's index
                      targetArray.splice(personPosition, 1);
                  }
 
-                 // --- Efficiently Update Only the Affected Selector UI ---
+                 // Update UI efficiently
                  const selectorClass = type === 'eaters' ? '.eaters-selector' : '.payers-selector';
-                 // Find the specific row and then the selector div within that row
                  const row = this.itemizedElements.itemsTable.querySelector(`tr[data-index="${itemIndex}"]`);
                  if (row) {
                       const selectorDiv = row.querySelector(selectorClass);
                       if (selectorDiv) {
-                         // Re-render only the tags inside this specific selector div
-                         selectorDiv.innerHTML = this.renderPeopleSelector(itemIndex, type);
-                         // Re-attach listeners to the newly rendered tags within this div
-                         this.attachSelectorEventListeners(selectorDiv);
-                      } else {
-                          console.warn("Could not find selector div", selectorClass, "in row", itemIndex);
+                         selectorDiv.innerHTML = this.renderPeopleSelector(itemIndex, type); // Re-render only the changed selector
+                         this.attachSelectorEventListeners(selectorDiv); // Re-attach listeners for the new tags
                       }
-                 } else {
-                     console.warn("Could not find row to update selectors for item index:", itemIndex);
                  }
 
-                 // Recalculate balances and save the updated item data
                  this.calculateItemized();
                  this.saveData();
             }
 
-            // Deletes an item from the list and the table
             deleteItem(indexToDelete) {
-                 if (indexToDelete < 0 || indexToDelete >= this.items.length) {
-                     console.error("Invalid index to delete:", indexToDelete);
-                     return; // Index out of bounds
-                 }
+                 if (indexToDelete < 0 || indexToDelete >= this.items.length) return;
 
-                 // Remove item from the data array
                  this.items.splice(indexToDelete, 1);
 
-                 // --- Update the UI ---
-                 const tableBody = this.itemizedElements.itemsTable; // Reference to tbody
+                 const tableBody = this.itemizedElements.itemsTable;
                  const rowToDelete = tableBody.querySelector(`tr[data-index="${indexToDelete}"]`);
                  if (rowToDelete) {
-                     rowToDelete.remove(); // Remove the row from the DOM
-                 } else {
-                      console.warn("Could not find row element to delete for index:", indexToDelete);
+                     rowToDelete.remove();
                  }
-
-                 // --- Update indices of subsequent rows and their interactive elements ---
-                 // Select all remaining rows within the tbody
+                 // Update indices of subsequent rows and their interactive elements
                  const remainingRows = tableBody.querySelectorAll('tr');
                  remainingRows.forEach((row, newIndex) => {
-                     // The `newIndex` is the row's current position (0, 1, 2...)
-                     // We only need to potentially update rows whose *original* index was >= the deleted one,
-                     // but since we iterate after deletion, `newIndex` is the correct final index.
-                     // We just need to update the `data-index` attribute and internal element data attributes.
-                     row.dataset.index = newIndex; // Update the row's main index attribute
-
-                     // Update data-item-index on all relevant elements within the row
-                     row.querySelectorAll('[data-item-index]').forEach(el => {
-                         el.dataset.itemIndex = newIndex;
-                         // Special case: Update placeholder text if needed (optional)
-                         if (el.classList.contains('item-name') || el.classList.contains('item-price')) {
-                             // Example: el.placeholder = `... ${newIndex + 1}`;
-                         }
-                     });
-                     // Update data-index specifically for the delete button within the row
+                     row.dataset.index = newIndex; // Update row index
+                     // Update indices within the row's elements
+                     row.querySelectorAll('[data-item-index]').forEach(el => { el.dataset.itemIndex = newIndex; });
                      const deleteBtn = row.querySelector('.delete-btn');
                      if(deleteBtn) {
-                        deleteBtn.dataset.index = newIndex; // Update delete button's index reference
-                        deleteBtn.setAttribute('aria-label', `Xoá món ${newIndex + 1}`); // Update accessibility label
+                        deleteBtn.dataset.index = newIndex; // Update delete button index
+                        deleteBtn.setAttribute('aria-label', `Xoá món ${newIndex + 1}`);
                      }
-                     // Re-attach listeners for this row, as its index context has changed
-                     // (Crucial for selectors and delete button)
+                     // Re-attach listeners with correct index context to avoid stale closures
                       this.attachItemEventListeners(row, newIndex);
                  });
 
-                 // Recalculate balances and save the modified items array
                  this.calculateItemized();
                  this.saveData();
             }
 
             addNewPerson() {
-                const currentPersonCount = this.people.length;
-                const defaultName = `Người ${currentPersonCount + 1}`;
+                const defaultName = `Người ${this.people.length + 1}`;
                 const personName = prompt('Nhập tên người mới:', defaultName);
-
-                // Validate input: Check if null (cancelled) or empty/whitespace only
-                if (!personName || personName.trim() === '') return;
-
+                if (!personName || personName.trim() === '') return; // Cancelled or empty
                 const trimmedName = personName.trim();
-
-                 // Optional: Check for duplicate names
                  if (this.people.includes(trimmedName)) {
                      alert(`Tên "${trimmedName}" đã tồn tại. Vui lòng chọn tên khác.`);
                      return;
                  }
-
-                // Add the new person to the list
                 this.people.push(trimmedName);
-
-                // Refresh the entire itemized table to include the new person in all selectors
-                this.refreshItemizedTable();
-
-                // Recalculate balances (as net amounts might change even if items don't)
-                this.calculateItemized();
-
-                // Save the updated people list and potentially recalculated item assignments
+                this.refreshItemizedTable(); // Re-render table to include new person in selectors
+                this.calculateItemized(); // Recalculate based on updated people list
                 this.saveData();
             }
 
             calculateItemized() {
                  if (this.activeTab !== 'itemized') return;
 
-                 // Reset results display areas first
-                 this.lastCalculatedAmount = 0; // Itemized doesn't have a single 'total' amount like other tabs
+                 // Reset results area
+                 this.lastCalculatedAmount = 0; // Reset total for itemized (used by other tabs)
                  this.resultElements.itemizedResultDetails.innerHTML = '';
-                 this.resultElements.amountToPay.textContent = ''; // Title text for results
-                 this.resultElements.additionalInfo.innerHTML = ''; // Clear any previous messages
+                 this.resultElements.amountToPay.textContent = '';
+                 this.resultElements.additionalInfo.innerHTML = '';
                  this.resultElements.progressBar.style.width = '0%';
                  this.resultElements.progressText.textContent = '';
 
-                 // Always hide the main QR container when recalculating itemized, transaction QR is separate
+                 // Hide QR if it was shown
                  if (this.paymentElements.qrCodeContainer.style.display !== 'none') {
                     this.paymentElements.qrCodeContainer.style.display = 'none';
                     this.clearQrActions();
                     this.currentQrImageUrl = null;
                  }
 
-                 // --- Validation and Early Exit Conditions ---
                  if (this.items.length === 0) {
                       this.resultElements.amountToPay.textContent = 'Chưa có món ăn nào.';
                      this.resultElements.progressText.textContent = 'Thêm món ăn...';
+                      this.updateGenerateQRButtonState(); // Update main button state
                      return;
                  }
 
-                 // Check if all items have a valid price (either empty string or non-negative number)
+                 // Validation: Check for non-numeric prices
                  const allItemsHaveValidPrice = this.items.every(item =>
                      item.price === '' || (!isNaN(parseFloat(item.price)) && parseFloat(item.price) >= 0)
                  );
                  if (!allItemsHaveValidPrice) {
-                      this.resultElements.amountToPay.textContent = 'Lỗi giá tiền:';
-                      this.resultElements.additionalInfo.innerHTML = 'Một hoặc nhiều món có giá tiền không hợp lệ (không phải số hoặc âm).';
-                     this.resultElements.progressText.textContent = 'Lỗi giá tiền';
+                      this.resultElements.amountToPay.textContent = 'Lỗi giá tiền';
+                      this.resultElements.additionalInfo.innerHTML = 'Kiểm tra lại giá trị nhập vào ô "Giá". Chỉ nhập số.';
+                      this.resultElements.progressText.textContent = 'Lỗi giá tiền';
+                      this.updateGenerateQRButtonState();
                       return;
                  }
 
-                 // Check if any item *with a price > 0* is missing a payer
+                 // Validation: Check if priced items are missing payers
                  const pricedItemsMissingPayers = this.items.some(item => {
                     const price = parseFloat(item.price) || 0;
-                    // Ensure payers is an array and check length
+                    // Item has a price > 0 AND (payers is not an array OR payers array is empty)
                     return price > 0 && (!Array.isArray(item.payers) || item.payers.length === 0);
                  });
-
                  if (pricedItemsMissingPayers) {
-                     this.resultElements.amountToPay.textContent = 'Thiếu thông tin:';
-                     this.resultElements.additionalInfo.innerHTML = 'Vui lòng chọn <strong>người trả</strong> cho mỗi món có giá tiền > 0.';
+                     this.resultElements.amountToPay.textContent = 'Thiếu thông tin';
+                     this.resultElements.additionalInfo.innerHTML = 'Vui lòng chọn <strong>người trả</strong> cho mỗi món có giá tiền.';
                      this.resultElements.progressText.textContent = 'Thiếu người trả';
-                     return; // Stop calculation until payers are assigned
+                     this.updateGenerateQRButtonState();
+                     return;
                  }
 
-                 // --- Calculate Costs and Payments per Person ---
-                 const personCosts = Array(this.people.length).fill(0);
-                 const personPayments = Array(this.people.length).fill(0);
+                 // --- Start Calculation ---
+                 const personCosts = Array(this.people.length).fill(0); // How much each person SHOULD pay
+                 const personPayments = Array(this.people.length).fill(0); // How much each person DID pay
                  let totalBill = 0;
+                 const tolerance = 1; // Tolerance for floating point comparisons (1 VND)
 
                  this.items.forEach(item => {
-                     const itemPrice = (parseFloat(item.price) || 0) * 1000; // Convert 'k' to actual value
-                     totalBill += itemPrice; // Accumulate total bill
-
+                     const itemPrice = (parseFloat(item.price) || 0) * 1000;
+                     totalBill += itemPrice;
                      const eaters = Array.isArray(item.eaters) ? item.eaters : [];
                      const payers = Array.isArray(item.payers) ? item.payers : [];
 
@@ -1743,309 +1775,246 @@
                      if (eaters.length > 0 && itemPrice > 0) {
                          const costPerEater = itemPrice / eaters.length;
                          eaters.forEach(personIndex => {
-                             // Ensure index is valid before adding cost
                              if (personIndex >= 0 && personIndex < personCosts.length) {
                                  personCosts[personIndex] += costPerEater;
-                             } else {
-                                 console.warn(`Invalid eater index ${personIndex} found for item "${item.name}"`);
                              }
                          });
                      }
-
-                     // Distribute payment among payers
+                     // Record payments made by payers
                      if (payers.length > 0 && itemPrice > 0) {
                          const paymentPerPayer = itemPrice / payers.length;
                          payers.forEach(personIndex => {
-                             // Ensure index is valid before adding payment
                              if (personIndex >= 0 && personIndex < personPayments.length) {
                                  personPayments[personIndex] += paymentPerPayer;
-                             } else {
-                                  console.warn(`Invalid payer index ${personIndex} found for item "${item.name}"`);
                              }
                          });
                      }
                  });
+                 // --- End Calculation ---
 
+                 // Calculate progress based on total paid vs total bill
                  const totalPaid = personPayments.reduce((sum, paid) => sum + paid, 0);
-                 const tolerance = 1; // Tolerance for floating point comparisons (e.g., 1 VND)
+                 const progressPercentage = totalBill > 0 ? Math.min(100, Math.max(0, (totalPaid / totalBill) * 100)) : (this.items.length > 0 ? 100 : 0);
 
-                 // Optional: Warn if total paid doesn't match total bill (usually due to rounding or complex splits)
-                  if (Math.abs(totalBill - totalPaid) > tolerance) {
-                      console.warn(`Potential discrepancy: Total Bill (${this.formatCurrency(totalBill)}) != Total Paid (${this.formatCurrency(totalPaid)}). Difference: ${this.formatCurrency(totalBill - totalPaid)}.`);
-                      // You might want to display a small warning in the UI as well
-                      // this.resultElements.additionalInfo.innerHTML += `<br><small style='color:orange;'>Lưu ý: Có thể có chênh lệch nhỏ do làm tròn.</small>`;
-                  }
+                 // Determine net balance for each person (payment - cost)
+                 // Positive means they paid more than they consumed (creditor)
+                 // Negative means they consumed more than they paid (debtor)
+                 const netAmounts = personCosts.map((cost, index) => ({
+                    index,
+                    net: personPayments[index] - cost
+                 })).filter(person => Math.abs(person.net) > tolerance); // Only consider those with a non-negligible balance
 
-                 // Calculate progress based on how much of the total bill has been assigned as paid
-                 const progressPercentage = totalBill > 0 ? Math.min(100, Math.max(0, (totalPaid / totalBill) * 100)) : (this.items.length > 0 ? 100 : 0); // 100% if bill is 0 but items exist, 0% if no items
+                 // --- Display Results ---
+                 // Update progress bar and text
+                 this.resultElements.progressBar.style.width = `${progressPercentage}%`;
+                 this.resultElements.progressText.textContent = `Tổng Bill: ${this.formatCurrency(totalBill)} (${Math.round(progressPercentage)}% đã trả)`;
 
-                 // --- Calculate Net Balances and Transactions ---
-                 // Calculate net amount for each person (paid - cost)
-                 const netAmounts = personCosts.map((cost, index) => {
-                     const paid = personPayments[index];
-                     const net = paid - cost; // Positive: owes money back; Negative: needs to pay
-                     return { index, cost, paid, net };
-                 }).filter(person => Math.abs(person.net) > tolerance); // Only consider people with non-negligible balance
-
-                 // Check if calculation resulted in everyone balanced or if the bill is zero
+                 // Check if settlement is needed
                  if (netAmounts.length === 0) {
-                      if (totalBill <= tolerance && this.items.length > 0) {
-                          // Items exist, but total bill is effectively zero
-                          this.resultElements.amountToPay.textContent = 'Tổng bill là 0.';
-                           this.resultElements.itemizedResultDetails.innerHTML = `<p style="color: var(--text-light);">Không cần giao dịch.</p>`;
-                           this.resultElements.progressText.textContent = `Tổng Bill: ${this.formatCurrency(totalBill)} (100%)`;
-                           this.resultElements.progressBar.style.width = `100%`;
-                      } else if (totalBill > tolerance) {
-                          // Bill exists, but everyone's net balance is zero (perfectly balanced payments)
+                      if (totalBill <= tolerance && this.items.length > 0) { // Bill is essentially zero
+                          this.resultElements.amountToPay.textContent = 'Tổng bill là 0';
+                          this.resultElements.itemizedResultDetails.innerHTML = `<p style="color: var(--text-light);">Không cần giao dịch</p>`;
+                      } else if (totalBill > tolerance) { // Bill has value, but everyone is balanced
                           this.resultElements.amountToPay.textContent = 'Đã cân bằng!';
-                          this.resultElements.itemizedResultDetails.innerHTML = `<p style="color: var(--success-color);">Tất cả mọi người đã trả đủ phần của mình, không cần chuyển khoản thêm.</p>`;
-                          this.resultElements.progressText.textContent = `Tổng Bill: ${this.formatCurrency(totalBill)} (${Math.round(progressPercentage)}%)`;
-                          this.resultElements.progressBar.style.width = `${progressPercentage}%`;
-                      } else {
-                          // No items added yet, handled earlier
-                           this.resultElements.amountToPay.textContent = 'Chưa có món ăn nào.';
-                           this.resultElements.progressText.textContent = 'Thêm món ăn...';
+                          this.resultElements.itemizedResultDetails.innerHTML = `<p style="color: var(--success-color);">Không cần chuyển khoản thêm.</p>`;
+                      } else { // No items yet or calculation error led to zero netAmounts unexpectedly
+                           this.resultElements.amountToPay.textContent = 'Chưa có món ăn nào.'; // Or some error message
                       }
-                      return; // Exit calculation as no transactions needed
+                      this.updateGenerateQRButtonState();
+                      return;
                  }
 
-                 // --- Compute Simplified Transactions ---
+                 // Calculate the minimum necessary transactions
                  const transactions = this.computeTransactions(netAmounts);
 
-                 // --- Display Transactions ---
                  this.resultElements.amountToPay.textContent = 'Các giao dịch cần thực hiện:';
-                 this.resultElements.itemizedResultDetails.innerHTML = ''; // Clear previous transactions
+                 this.resultElements.itemizedResultDetails.innerHTML = ''; // Clear previous results
 
                  if (transactions.length === 0 && netAmounts.length > 0) {
-                    // Should not happen if netAmounts > 0, but as a fallback
-                    console.warn("Net amounts exist but no transactions generated.");
+                      // This shouldn't happen with the current logic, but as a safeguard
                      this.resultElements.itemizedResultDetails.innerHTML = `<p style="color: var(--error-color);">Lỗi tính toán cân bằng.</p>`;
                  } else {
                      transactions.forEach(t => {
-                         // Round transaction amount to nearest 1000 VND
                          const roundedAmount = this.roundToThousand(t.amount);
-                          const formattedAmount = this.formatCurrency(roundedAmount);
+                          if (roundedAmount <= 0) return; // Don't show zero/negative transactions
 
-                          // Only display transaction if rounded amount is > 0
-                          if (roundedAmount <= 0) return;
-
-                         // Create div for each transaction line
+                         const formattedAmount = this.formatCurrency(roundedAmount);
                          const transactionDiv = document.createElement('div');
                          transactionDiv.classList.add('transaction-line');
-                         // Description for QR code is extracted from this text span
+                         // Add transaction text and the specific QR button
                          transactionDiv.innerHTML = `
-                              <span class="transaction-text">${t.from} chuyển ${t.to}: <strong>${formattedAmount} VND</strong></span>
+                              <span class="transaction-text">${this.people[t.fromIndex]} chuyển ${this.people[t.toIndex]}: <strong>${formattedAmount} VND</strong></span>
                               <button class="btn btn-sm generate-transaction-qr"
                                       data-amount="${roundedAmount}"
-                                      title="Tạo QR cho giao dịch ${t.from} → ${t.to}">Tạo QR</button>
+                                      title="Tạo QR cho giao dịch ${this.people[t.fromIndex]} → ${this.people[t.toIndex]}">Tạo QR</button>
                           `;
                           this.resultElements.itemizedResultDetails.appendChild(transactionDiv);
                       });
                  }
-
-                 // Update overall progress text and bar
-                 this.resultElements.progressBar.style.width = `${progressPercentage}%`;
-                 this.resultElements.progressText.textContent =
-                      `Tổng Bill: ${this.formatCurrency(totalBill)} (${Math.round(progressPercentage)}% thanh toán)`;
-
-                  // Ensure main QR button remains hidden/disabled
-                  this.updateGenerateQRButtonState();
+                  this.updateGenerateQRButtonState(); // Update main button state (it will be hidden for itemized)
             }
 
-            // Algorithm to simplify debts between people
+            // Algorithm to minimize transactions (Greedy approach)
             computeTransactions(netAmounts) {
-                 const tolerance = 1; // Use a small tolerance (e.g., 1 VND) to avoid tiny transactions
-
-                 // Separate into debtors (owe money, net < 0) and creditors (are owed money, net > 0)
-                 // Make copies to avoid modifying the original array directly during processing
-                 let debtors = netAmounts.filter(p => p.net < -tolerance).map(p => ({ ...p })).sort((a, b) => a.net - b.net); // Sort by most negative first
-                 let creditors = netAmounts.filter(p => p.net > tolerance).map(p => ({ ...p })).sort((a, b) => b.net - a.net); // Sort by most positive first
-
+                 const tolerance = 1;
+                 // Separate into debtors and creditors, deep copy to avoid modifying original data
+                 let debtors = netAmounts.filter(p => p.net < -tolerance).map(p => ({ ...p })).sort((a, b) => a.net - b.net); // Most negative first
+                 let creditors = netAmounts.filter(p => p.net > tolerance).map(p => ({ ...p })).sort((a, b) => b.net - a.net); // Most positive first
                  const transactions = [];
                  let debtorIndex = 0;
                  let creditorIndex = 0;
 
-                 // Loop while there are still debtors and creditors with balances
+                 // Loop while there are still debtors and creditors to potentially match
                  while (debtorIndex < debtors.length && creditorIndex < creditors.length) {
                      const debtor = debtors[debtorIndex];
                      const creditor = creditors[creditorIndex];
+                     const amountToTransfer = Math.min(-debtor.net, creditor.net); // Transfer the smaller amount
 
-                     // Amount to transfer is the minimum of what the debtor owes or the creditor is owed
-                     const amountToTransfer = Math.min(-debtor.net, creditor.net);
-
-                     // Only record transaction if the amount is significant
-                     if (amountToTransfer > tolerance) {
+                     if (amountToTransfer > tolerance) { // Only record significant transfers
                          transactions.push({
-                             from: this.people[debtor.index], // Get name from original people array
-                             to: this.people[creditor.index],   // Get name from original people array
+                             fromIndex: debtor.index, // Store index for lookup
+                             toIndex: creditor.index,   // Store index for lookup
                              amount: amountToTransfer
                          });
-
-                         // Adjust balances of the current debtor and creditor
+                         // Update balances
                          debtor.net += amountToTransfer;
                          creditor.net -= amountToTransfer;
                      }
-
-                     // Move to the next debtor if their balance is now close to zero
-                     if (Math.abs(debtor.net) < tolerance) {
-                         debtorIndex++;
-                     }
-                     // Move to the next creditor if their balance is now close to zero
-                     if (Math.abs(creditor.net) < tolerance) {
-                         creditorIndex++;
-                     }
+                     // If a debtor is fully paid up, move to the next debtor
+                     if (Math.abs(debtor.net) < tolerance) debtorIndex++;
+                     // If a creditor is fully satisfied, move to the next creditor
+                     if (Math.abs(creditor.net) < tolerance) creditorIndex++;
                  }
-
-                 // Log any remaining balances (should be negligible if algorithm worked)
-                 // debtors.concat(creditors).forEach(p => {
-                 //     if (Math.abs(p.net) > tolerance) {
-                 //         console.warn(`Transaction balancing finished with non-zero balance for ${this.people[p.index]}: ${p.net}`);
-                 //     }
-                 // });
-
                  return transactions;
             }
 
             // --- UI Helpers ---
-            // Toggles the visibility of the payment options form
              togglePaymentOptions(show) {
                  const paymentDiv = this.paymentElements.paymentOptions;
                  const currentlyShown = paymentDiv.style.display !== 'none';
-
                  if (show && !currentlyShown) {
                      paymentDiv.style.display = 'block';
-                     // Scroll into view smoothly when showing
+                     // Scroll smoothly into view
                      paymentDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                  } else if (!show && currentlyShown) {
                      paymentDiv.style.display = 'none';
                  }
-                 // If already in the desired state, do nothing.
-                 // Note: This doesn't automatically hide the QR code display.
+                 // No action if state is already correct
              }
-
-            // Resets the payment information fields
              resetPaymentInfo() {
                  if (confirm('Xác nhận xoá thông tin Ngân hàng, Số tài khoản, Tên tài khoản đã lưu?')) {
-                     this.paymentElements.bankSelect.value = ''; // Reset dropdown
+                     this.paymentElements.bankSelect.value = '';
                      this.paymentElements.accountNo.value = '';
                      this.paymentElements.accountName.value = '';
-                     this.updateGenerateQRButtonState(); // Disable QR button
-                     this.saveData(); // Persist the cleared payment info
-
-                     // Hide any existing QR code as the info is now invalid
-                     this.paymentElements.qrCodeContainer.style.display = 'none';
-                     this.clearQrActions();
-                     this.currentQrImageUrl = null;
+                     this.updateGenerateQRButtonState(); // Disable QR button if needed
+                     this.saveData(); // Persist the cleared data
+                     // Hide QR section if it was visible
+                     if (this.paymentElements.qrCodeContainer.style.display !== 'none') {
+                        this.paymentElements.qrCodeContainer.style.display = 'none';
+                        this.clearQrActions();
+                        this.currentQrImageUrl = null;
+                     }
                  }
              }
 
             // --- Data Persistence (LocalStorage) ---
             loadSavedData() {
-                const savedData = localStorage.getItem('billSplitterData_v2'); // Using a versioned key
+                const savedData = localStorage.getItem('billSplitterData_v2');
                 if (savedData) {
                     try {
                         const data = JSON.parse(savedData);
 
-                        // Load calculation inputs for Takeaway tab
+                        // Load data for each tab if present
                         if (data.takeaway) {
                             this.takeawayInputs.foodCost.value = data.takeaway.foodCost || '';
                             this.takeawayInputs.shippingCost.value = data.takeaway.shippingCost || '';
                             this.takeawayInputs.discount.value = data.takeaway.discount || '';
                             this.takeawayInputs.numPeople.value = data.takeaway.numPeople || '';
                         }
-                        // Load calculation inputs for Dine-in tab
                         if (data.dineIn) {
                             this.dineInInputs.totalFoodCost.value = data.dineIn.totalFoodCost || '';
                             this.dineInInputs.notEatenCost.value = data.dineIn.notEatenCost || '';
                             this.dineInInputs.numDiners.value = data.dineIn.numDiners || '';
                         }
-                        // Load data for Itemized tab
                         if (data.itemized) {
-                            // Load people list, ensure it's a valid array, provide default if not
+                            // Load people list, ensuring it's a valid array or default
                             this.people = (Array.isArray(data.itemized.people) && data.itemized.people.length > 0)
-                                          ? data.itemized.people
-                                          : ['Người 1', 'Người 2', 'Người 3']; // Default if saved list is empty/invalid
-
-                            // Load items list, ensure it's an array
+                                          ? data.itemized.people : ['Người 1', 'Người 2', 'Người 3'];
+                            // Load items, ensuring it's an array and sanitizing each item
                             this.items = Array.isArray(data.itemized.items) ? data.itemized.items : [];
-
-                            // Sanitize loaded items to ensure properties exist and have correct types
-                             this.items.forEach(item => {
+                            this.items.forEach(item => { // Ensure data types are correct after loading
                                  item.name = typeof item.name === 'string' ? item.name : '';
-                                 // Price can be number or string (including empty string)
                                  item.price = (typeof item.price === 'number' || typeof item.price === 'string') ? String(item.price) : '';
                                  item.eaters = Array.isArray(item.eaters) ? item.eaters : [];
                                  item.payers = Array.isArray(item.payers) ? item.payers : [];
-                                  // Optional: Filter out invalid indices from eaters/payers if needed
-                                  // item.eaters = item.eaters.filter(idx => idx >= 0 && idx < this.people.length);
-                                  // item.payers = item.payers.filter(idx => idx >= 0 && idx < this.people.length);
                              });
-                            // Render the loaded itemized data into the table UI
-                            this.refreshItemizedTable();
+                             this.refreshItemizedTable(); // Re-render the itemized table with loaded data
                         } else {
-                             // If no itemized data saved, initialize with defaults
+                             // Default state if no itemized data found
                              this.people = ['Người 1', 'Người 2', 'Người 3'];
                              this.items = [];
-                             this.refreshItemizedTable(); // Ensure table is empty/rendered correctly
+                             this.refreshItemizedTable();
                          }
-
-                        // Load saved payment information
+                        // Load payment info if present
                         if(data.payment) {
+                             // Value is set here, relying on populateBankSelect being called first (FIX 1)
                              this.paymentElements.bankSelect.value = data.payment.acqId || '';
                              this.paymentElements.accountNo.value = data.payment.accountNo || '';
                              this.paymentElements.accountName.value = data.payment.accountName || '';
+                             // If the loaded bank value is invalid/not found, reset to placeholder
+                             if (!this.paymentElements.bankSelect.value) {
+                                 this.paymentElements.bankSelect.selectedIndex = 0;
+                             }
                          }
-
-                        // Load last active tab, default to 'takeaway' if invalid/missing
+                        // Load last active tab, defaulting to 'takeaway' if invalid
                         this.activeTab = data.activeTab && this.tabs[data.activeTab] ? data.activeTab : 'takeaway';
 
                     } catch (e) {
-                        console.error("Error parsing saved data from localStorage:", e);
-                        localStorage.removeItem('billSplitterData_v2'); // Clear corrupted data
-                         this.resetState(true); // Reset everything to defaults on error
+                        console.error("Error parsing saved data:", e);
+                        localStorage.removeItem('billSplitterData_v2'); // Clear potentially corrupt data
+                         this.resetState(true); // Reset everything to default on error
                     }
                 } else {
-                     // No saved data found, initialize with defaults
-                     this.resetState(true); // Full reset including payment info
+                     // If no data exists, reset everything to default state
+                     this.resetState(true);
                 }
-                 // Note: Initial UI setup (switchTab, populateBankSelect, updateGenerateQRButtonState)
-                 // is called *after* loadSavedData in the constructor.
+                // Ensure the QR button state is correct after loading data
+                 this.updateGenerateQRButtonState();
             }
 
-             // Resets the application state (inputs, items, people), optionally resetting payment info too
+             // Helper function to reset the application state
              resetState(resetPayment = false) {
-                 this.activeTab = 'takeaway'; // Default tab
-                 // Reset calculation inputs
+                 this.activeTab = 'takeaway';
+                 // Clear inputs for all tabs
                  Object.values(this.takeawayInputs).forEach(input => input.value = '');
                  Object.values(this.dineInInputs).forEach(input => input.value = '');
                  // Reset itemized data
-                 this.people = ['Người 1', 'Người 2', 'Người 3']; // Default people
+                 this.people = ['Người 1', 'Người 2', 'Người 3'];
                  this.items = [];
-                 this.refreshItemizedTable(); // Clear itemized table UI
-
-                 // Reset payment info if requested
+                 this.refreshItemizedTable(); // Clear the table UI
+                 // Optionally reset payment info
                  if (resetPayment) {
                      this.paymentElements.bankSelect.value = '';
                      this.paymentElements.accountNo.value = '';
                      this.paymentElements.accountName.value = '';
+                      if (this.paymentElements.bankSelect.options.length > 0) {
+                         this.paymentElements.bankSelect.selectedIndex = 0; // Select placeholder
+                      }
                  }
-
-                 // Clear results and QR display
+                 // Reset calculation results and UI
                  this.lastCalculatedAmount = 0;
                  this.resultElements.amountToPay.textContent = '';
                  this.resultElements.additionalInfo.innerHTML = '';
                  this.resultElements.itemizedResultDetails.innerHTML = '';
                  this.resultElements.progressBar.style.width = '0%';
                  this.resultElements.progressText.textContent = '';
+                 // Hide QR section
                  this.paymentElements.qrCodeContainer.style.display = 'none';
                  this.clearQrActions();
                  this.currentQrImageUrl = null;
-
-                 // Update button states after reset
+                 // Update button states
                  this.updateGenerateQRButtonState();
              }
-
-             // Saves the current application state to localStorage
              saveData() {
                  const dataToSave = {
                      activeTab: this.activeTab,
@@ -2062,10 +2031,10 @@
                      },
                      itemized: {
                          people: this.people,
-                         // Save items, ensuring properties are correctly formatted
+                         // Ensure items are saved with consistent structure
                          items: this.items.map(item => ({
                              name: item.name || '',
-                             price: String(item.price || ''), // Ensure price is saved as string (number or empty)
+                             price: String(item.price || ''), // Save price as string
                              eaters: Array.isArray(item.eaters) ? item.eaters : [],
                              payers: Array.isArray(item.payers) ? item.payers : []
                          }))
@@ -2079,34 +2048,29 @@
                  try {
                      localStorage.setItem('billSplitterData_v2', JSON.stringify(dataToSave));
                  } catch (e) {
-                     console.error("Error saving data to localStorage:", e);
+                     console.error("Error saving data:", e);
                      // Consider notifying the user if storage fails (e.g., quota exceeded)
                  }
              }
 
-            // Action for the top 'Reset' button (resets only the active tab's calculation data)
             resetActiveTab() {
                  const activeTabName = this.tabs[this.activeTab]?.textContent || 'hiện tại';
                  if (confirm(`Xác nhận xoá dữ liệu tính toán cho tab "${activeTabName}"? Thông tin thanh toán sẽ được giữ lại.`)) {
-                    // Clear inputs/data based on the active tab
+                    // Clear data specific to the active tab
                     if (this.activeTab === 'takeaway') {
                         Object.values(this.takeawayInputs).forEach(input => input.value = '');
-                        this.calculateTakeaway(); // Recalculate (to clear results) & update display
+                        this.calculateTakeaway(); // Recalculate (will show 0)
                     } else if (this.activeTab === 'dineIn') {
                         Object.values(this.dineInInputs).forEach(input => input.value = '');
-                        this.calculateDineIn(); // Recalculate & update display
+                        this.calculateDineIn(); // Recalculate
                     } else if (this.activeTab === 'itemized') {
-                        // Reset people and items for this tab
-                        this.people = ['Người 1', 'Người 2', 'Người 3'];
-                        this.items = [];
-                        this.refreshItemizedTable(); // Clear and re-render table UI
-                        this.calculateItemized(); // Recalculate & update display (will show 'no items')
+                        this.people = ['Người 1', 'Người 2', 'Người 3']; // Reset people
+                        this.items = []; // Clear items array
+                        this.refreshItemizedTable(); // Clear table UI
+                        this.calculateItemized(); // Recalculate
                     }
-
-                    // Persist the cleared calculation data (payment info remains untouched)
-                    this.saveData();
-
-                     // Hide QR code display as calculations are reset
+                    this.saveData(); // Save the cleared state for the active tab
+                    // Hide QR section if it was visible after reset
                     if (this.paymentElements.qrCodeContainer.style.display !== 'none') {
                        this.paymentElements.qrCodeContainer.style.display = 'none';
                        this.clearQrActions();
@@ -2115,39 +2079,35 @@
                  }
             }
 
-            // Re-renders the entire itemized table based on the current `this.items` and `this.people`
+            // Refreshes the itemized table UI based on the current `this.items` array
             refreshItemizedTable() {
                 const tableBody = this.itemizedElements.itemsTable;
-                // Clear current content efficiently
-                tableBody.innerHTML = '';
+                tableBody.innerHTML = ''; // Clear existing rows
 
-                 // Check if there are items to render
                  if (this.items.length === 0 && this.activeTab === 'itemized') {
-                      // Optional: Display a placeholder row if the table is empty
-                      // const placeholderRow = document.createElement('tr');
-                      // placeholderRow.innerHTML = `<td colspan="5" style="text-align:center; color: var(--text-light); padding: 20px;">Chưa có món nào. Nhấn "+ Thêm món" để bắt đầu.</td>`;
-                      // tableBody.appendChild(placeholderRow);
+                     // Optional: Could add a placeholder row like "<tr><td colspan='5'>Chưa có món nào</td></tr>"
+                     // Currently, calculateItemized handles the "No items" message in the results area.
                  } else {
-                     // Render each item as a row
+                    // Rebuild rows from the items array
                     this.items.forEach((item, index) => {
                         const row = document.createElement('tr');
-                        row.dataset.index = index; // Set index attribute on the row
-                        // Use current item data to populate the row
+                        row.dataset.index = index;
+                        // *** Added data-label attributes for mobile stacking ***
                         row.innerHTML = `
-                            <td><input type="text" class="item-name" value="${item.name || ''}" placeholder="Tên món ${index + 1}"></td>
-                            <td><input type="number" class="item-price" value="${item.price || ''}" min="0" step="any" inputmode="decimal" placeholder="Giá (k)"></td>
-                            <td><div class="people-selector eaters-selector" data-index="${index}">${this.renderPeopleSelector(index, 'eaters')}</div></td>
-                            <td><div class="people-selector payers-selector" data-index="${index}">${this.renderPeopleSelector(index, 'payers')}</div></td>
-                            <td><button class="delete-btn btn btn-sm" data-index="${index}" aria-label="Xoá món ${index + 1}">✕</button></td>
+                            <td data-label="Món ăn"><input type="text" class="item-name" value="${item.name || ''}" placeholder="Tên món ${index + 1}"></td>
+                            <td data-label="Giá"><input type="number" class="item-price" value="${item.price || ''}" min="0" step="any" inputmode="decimal" placeholder="Giá"></td>
+                            <td data-label="Người ăn"><div class="people-selector eaters-selector" data-index="${index}">${this.renderPeopleSelector(index, 'eaters')}</div></td>
+                            <td data-label="Người trả"><div class="people-selector payers-selector" data-index="${index}">${this.renderPeopleSelector(index, 'payers')}</div></td>
+                            <td data-label="Xoá"><button class="delete-btn btn btn-sm" data-index="${index}" aria-label="Xoá món ${index + 1}">✕</button></td>
                         `;
                         tableBody.appendChild(row);
-                        // IMPORTANT: Attach event listeners to the elements within the newly created row
-                        this.attachItemEventListeners(row, index);
+                        this.attachItemEventListeners(row, index); // Attach listeners to the newly created row
                     });
                  }
+                 // No need to call calculateItemized here, it's called by the functions that modify items/people.
             }
 
-             // Attaches necessary event listeners to the interactive elements within a single item row
+             // Attaches event listeners to elements within a single item row
              attachItemEventListeners(row, itemIndex) {
                  const nameInput = row.querySelector('.item-name');
                  const priceInput = row.querySelector('.item-price');
@@ -2155,94 +2115,80 @@
                  const eatersSelectorDiv = row.querySelector('.eaters-selector');
                  const payersSelectorDiv = row.querySelector('.payers-selector');
 
-                 // --- Input Listeners (Name and Price) ---
+                 // Name input listener
                  if (nameInput) {
-                     // Use 'input' for immediate update, debounced to save data less frequently
                      nameInput.addEventListener('input', this.debounce((e) => {
-                         if (this.items[itemIndex]) { // Check item exists
+                         // Check item exists before accessing (safety)
+                         if (this.items[itemIndex]) {
                              this.items[itemIndex].name = e.target.value;
                              this.saveData(); // Save name change
-                         } else { console.warn("Item not found at index", itemIndex, "for name input"); }
+                             // Name change doesn't affect calculation, so no recalculate needed here
+                         }
                      }, 300));
                  }
-
+                 // Price input listener
                  if (priceInput) {
-                      // Use 'input', debounced, recalculate on change
                      priceInput.addEventListener('input', this.debounce((e) => {
-                         if (this.items[itemIndex]) { // Check item exists
-                              // Store price as string from input; calculation will parse it
+                         if (this.items[itemIndex]) {
                              this.items[itemIndex].price = e.target.value;
-                             this.calculateItemized(); // Recalculate totals/balances
-                             this.saveData(); // Save price change
-                         } else { console.warn("Item not found at index", itemIndex, "for price input"); }
+                             this.calculateItemized(); // Recalculate on price change
+                             this.saveData(); // Save new price and results
+                         }
                      }, 300));
                  }
-
-                // --- Delete Button Listener ---
+                 // Delete button listener
                  if (deleteBtn) {
-                      // Remove potential old listener first (important if re-attaching)
-                      deleteBtn.removeEventListener('click', this.handleDeleteItemClick);
-                      // Add new listener, bind `this`
-                      deleteBtn.addEventListener('click', this.handleDeleteItemClick.bind(this));
-                 } else {
-                      console.warn("Delete button not found for row index:", itemIndex);
+                      // Ensure the bound handler exists
+                      if (!this.boundHandleDeleteItemClick) this.boundHandleDeleteItemClick = this.handleDeleteItemClick.bind(this);
+                      // Remove any previous listener first
+                      deleteBtn.removeEventListener('click', this.boundHandleDeleteItemClick);
+                      // Add the listener
+                      deleteBtn.addEventListener('click', this.boundHandleDeleteItemClick);
                  }
-
-                 // --- People Selector Listeners ---
-                 // Attach listeners to the tags *inside* the selector divs
-                 if (eatersSelectorDiv) {
-                     this.attachSelectorEventListeners(eatersSelectorDiv);
-                 }
-                  if (payersSelectorDiv) {
-                     this.attachSelectorEventListeners(payersSelectorDiv);
-                 }
+                 // Attach listeners to people selectors in this row
+                 if (eatersSelectorDiv) this.attachSelectorEventListeners(eatersSelectorDiv);
+                 if (payersSelectorDiv) this.attachSelectorEventListeners(payersSelectorDiv);
              }
 
-             // Bound handler specifically for the delete button click event
-             // Ensures `this` refers to the BillSplitter instance
+             // Bound handler specifically for the delete button click to preserve `this` context
              handleDeleteItemClick(event) {
                  const button = event.target.closest('.delete-btn');
-                 // Check if the button exists and has a valid data-index
                  if (button && button.dataset.index != null) {
                     const indexToDelete = parseInt(button.dataset.index);
-                     if (!isNaN(indexToDelete)) {
-                         // Call the main deleteItem logic
-                         this.deleteItem(indexToDelete);
+                     // Check if index is a valid number before deleting
+                     if (!isNaN(indexToDelete) && indexToDelete >= 0 && indexToDelete < this.items.length) {
+                         // Optional: Confirm deletion
+                         // if (confirm(`Bạn có chắc muốn xoá món "${this.items[indexToDelete].name || `Món ${indexToDelete + 1}`}"?`)) {
+                              this.deleteItem(indexToDelete);
+                         // }
                      } else {
-                         console.error("Invalid non-numeric index found on delete button:", button.dataset.index);
+                         console.warn("Invalid index for delete button:", button.dataset.index);
                      }
-                 } else {
-                     console.error("Could not find delete button or its index from click event target:", event.target);
                  }
              }
 
             // --- Formatting Helpers ---
-            // Rounds an amount to the nearest thousand
+            // Rounds amount to the nearest 1000 VND
             roundToThousand(amount) {
-                 // Handle non-numeric inputs gracefully
                  const numericAmount = parseFloat(amount);
                  if (isNaN(numericAmount)) return 0;
-                 // Round to nearest 1000
+                 // Round to the nearest thousand
                  return Math.round(numericAmount / 1000) * 1000;
             }
-
-            // Formats a number as currency (VND)
+            // Formats amount as currency (e.g., 100000 -> 100.000)
             formatCurrency(amount) {
                   const numericAmount = parseFloat(amount);
                  if (isNaN(numericAmount)) return '0';
                  // Use Intl.NumberFormat for locale-aware formatting
                  return new Intl.NumberFormat('vi-VN').format(Math.round(numericAmount));
             }
-
             // Debounce function to limit the rate at which a function can fire
             debounce(func, wait) {
                 let timeout;
                 return (...args) => {
-                    // Capture the `this` context of where debounce is called (the BillSplitter instance)
-                    const context = this;
-                    // Clear the previous timeout if it exists
-                    clearTimeout(timeout);
-                    // Set a new timeout to execute the function after the wait period
+                    const context = this; // Preserve 'this' context
+                    clearTimeout(timeout); // Clear the previous timer
+                    // Set a new timer
                     timeout = setTimeout(() => func.apply(context, args), wait);
                 };
             }
@@ -2250,8 +2196,7 @@
 
         // --- Initialize the application ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Create an instance of the BillSplitter class
-            // The constructor handles loading data, setting up UI, and initial calculations
+            // Create an instance of the class, making it globally accessible if needed (or scoped)
             window.billSplitter = new BillSplitter();
         });
     </script>
