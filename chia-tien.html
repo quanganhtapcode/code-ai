@@ -1380,26 +1380,56 @@
                 saveButton.className = 'btn btn-sm btn-qr-action';
                 saveButton.textContent = 'Lưu QR';
                 saveButton.title = 'Tải mã QR này về máy';
-                saveButton.addEventListener('click', () => {
-                    if (!this.currentQrImageUrl) { alert('Không có mã QR để lưu.'); return; }
-                     this.toggleLoadingState(true, saveButton, 'Lưu QR');
-                    try {
-                        const link = document.createElement('a');
-                        link.href = this.currentQrImageUrl;
-                        const bankName = banks.find(b => b.bin === this.paymentElements.bankSelect.value)?.shortName || 'Bank';
-                        const accNoLast4 = this.paymentElements.accountNo.value.slice(-4);
-                        const filename = `VietQR_${bankName}_${accNoLast4}_${integerAmount}.png`;
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    } catch (error) {
-                        console.error('Lỗi khi lưu QR:', error);
-                        alert('Không thể tự động lưu QR. Bạn có thể thử nhấn giữ vào ảnh QR và chọn "Lưu ảnh".');
-                    } finally {
-                         this.toggleLoadingState(false, saveButton, 'Lưu QR');
-                    }
-                });
+		saveButton.addEventListener('click', async () => { // Make the function async
+    if (!this.currentQrImageUrl) {
+        alert('Không có mã QR để lưu.');
+        return;
+    }
+    this.toggleLoadingState(true, saveButton, 'Lưu QR');
+    let blobUrl = null; // To store the temporary URL
+
+    try {
+        // 1. Fetch the image data
+        const response = await fetch(this.currentQrImageUrl);
+        if (!response.ok) {
+            throw new Error(`Tải ảnh thất bại (${response.status} ${response.statusText})`);
+        }
+
+        // 2. Convert to Blob
+        const blob = await response.blob();
+
+        // 3. Create a local URL for the Blob
+        blobUrl = URL.createObjectURL(blob);
+
+        // --- Original filename calculation ---
+        const integerAmount = Math.round(parseFloat(this.paymentElements.qrAmount.textContent.replace(/[^\d]/g, '')) || 0);
+        const bankName = banks.find(b => b.bin === this.paymentElements.bankSelect.value)?.shortName || 'Bank';
+        const accNoLast4 = this.paymentElements.accountNo.value.slice(-4);
+        const filename = `VietQR_${bankName}_${accNoLast4}_${integerAmount}.png`;
+        // --- End filename calculation ---
+
+        // 4. Create the link with the Blob URL
+        const link = document.createElement('a');
+        link.href = blobUrl; // Use the local Blob URL
+        link.download = filename; // download attribute now works
+
+        // 5. Trigger the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+    } catch (error) {
+        console.error('Lỗi khi lưu QR:', error);
+        alert(`Không thể tự động lưu QR. Lỗi: ${error.message}. Bạn có thể thử nhấn chuột phải vào ảnh QR và chọn "Lưu hình ảnh thành...".`);
+    } finally {
+        // 6. Revoke the temporary URL
+        if (blobUrl) {
+            URL.revokeObjectURL(blobUrl);
+        }
+        this.toggleLoadingState(false, saveButton, 'Lưu QR');
+    }
+});
+
 
                 qrActionsContainer.appendChild(shareButton);
                 qrActionsContainer.appendChild(saveButton);
