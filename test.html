@@ -80,11 +80,11 @@
 </head>
 <body>
 
-    <h1>Test Page Generator</h1>
+    <h1>Tạo đề - DOF</h1>
 
     <form id="generator-form">
         <div class="form-group">
-            <label for="test-title">Test Title:</label>
+            <label for="test-title">Tên bài test:</label>
             <input type="text" id="test-title" name="test-title" placeholder="e.g., LEVEL 2 - Test 1" required>
         </div>
         <div class="form-group">
@@ -127,9 +127,7 @@
             document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
-        // --- HTML Template Function ---
         function createTestHtml(title, documentUrl, formUrl) {
-            // ** === RESTART BUTTON and related JS added === **
             return `
 <!DOCTYPE html>
 <html lang="vi">
@@ -139,10 +137,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
-            --bg-primary: #f8f9fa; --bg-secondary: #ffffff; --text-primary: #212529; --text-secondary: #495057; --accent-color: #4285f4; --secondary-accent: #34a853; --border-color: #dee2e6; --shadow-color: rgba(0, 0, 0, 0.15); --transition-speed: 0.3s; --timer-bg: #e9ecef; --timer-text: #495057; --timer-button-bg: #28a745; --timer-button-pause-bg: #ffc107; --timer-button-text: white; --timer-restart-button-bg: #6c757d; --timer-restart-button-hover-bg: #5a6268; --timer-restart-button-text: white;
+            --bg-primary: #f8f9fa; 
+            --bg-secondary: #ffffff; 
+            --text-primary: #212529; 
+            --text-secondary: #495057; 
+            --accent-color: #4285f4; 
+            --secondary-accent: #34a853; 
+            --border-color: #dee2e6; 
+            --shadow-color: rgba(0, 0, 0, 0.15); 
+            --transition-speed: 0.3s; 
+            --timer-bg: #e9ecef; 
+            --timer-text: #495057; 
+            --timer-button-bg: #28a745; 
+            --timer-button-pause-bg: #ffc107; 
+            --timer-button-text: white; 
+            --timer-restart-button-bg: #6c757d; 
+            --timer-restart-button-hover-bg: #5a6268; 
+            --timer-restart-button-text: white;
+            --timer-warning-color: #ff9800;
+            --timer-warning-bg: #ff6d00;
+            --timer-warning-text: white;
         }
         [data-theme="dark"] {
-             --bg-primary: #121212; --bg-secondary: #1e1e1e; --text-primary: #e0e0e0; --text-secondary: #b0b0b0; --accent-color: #8ab4f8; --secondary-accent: #81c995; --border-color: #333333; --shadow-color: rgba(0, 0, 0, 0.3); --timer-bg: #343a40; --timer-text: #e0e0e0; --timer-button-bg: #81c995; --timer-button-pause-bg: #fdd835; --timer-button-text: #121212; --timer-restart-button-bg: #5a6268; --timer-restart-button-hover-bg: #495057; --timer-restart-button-text: #e0e0e0;
+            --bg-primary: #121212; 
+            --bg-secondary: #1e1e1e; 
+            --text-primary: #e0e0e0; 
+            --text-secondary: #b0b0b0; 
+            --accent-color: #8ab4f8; 
+            --secondary-accent: #81c995; 
+            --border-color: #333333; 
+            --shadow-color: rgba(0, 0, 0, 0.3); 
+            --timer-bg: #343a40; 
+            --timer-text: #e0e0e0; 
+            --timer-button-bg: #81c995; 
+            --timer-button-pause-bg: #fdd835; 
+            --timer-button-text: #121212; 
+            --timer-restart-button-bg: #5a6268; 
+            --timer-restart-button-hover-bg: #495057; 
+            --timer-restart-button-text: #e0e0e0;
+            --timer-warning-color: #ffb74d;
+            --timer-warning-bg: #e65100;
+            --timer-warning-text: white;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
         body { font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; line-height: 1.6; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
@@ -171,11 +206,45 @@
         .slicer:hover { background-color: var(--accent-color); transform: scaleX(1.5); }
         .slicer.active { background-color: var(--accent-color); transform: scaleX(1.5); box-shadow: 0 0 8px var(--accent-color); }
         .footer { text-align: center; padding: 12px; background-color: var(--bg-secondary); color: var(--secondary-accent); font-weight: 500; font-style: italic; box-shadow: 0 -2px 10px var(--shadow-color); flex-shrink: 0; }
+        
+        .time-warning-notification {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--timer-warning-bg);
+            color: var(--timer-warning-text);
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: slideDown 0.5s ease, fadeIn 0.5s ease;
+            font-weight: bold;
+        }
+
+        .time-warning-notification.fade-out {
+            animation: fadeOut 1s ease;
+        }
+
+        @keyframes slideDown {
+            from { top: -100px; }
+            to { top: 80px; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
         @media (max-width: 1100px) { .container { flex-direction: column; gap: 20px; overflow: auto; } .slicer { display: none; } .panel { min-height: 400px; flex-grow: 1; flex-basis: auto; min-width: unset; } .document-panel, .form-panel { flex: 1; } }
         @media (max-width: 768px) { header { flex-direction: column; gap: 10px; align-items: stretch; } .header-left { justify-content: space-between; width: 100%; } .controls { justify-content: space-between; width: 100%;} .container { padding: 10px; } .panel { min-height: 350px; } }
         @media (max-width: 480px) { .theme-toggle, .fullscreen-toggle { padding: 6px 8px; font-size: 0.8rem; } .title { font-size: 1.2rem; } #timer-display { font-size: 1rem;} #timer-control-button, #timer-restart-button { padding: 5px 10px; font-size: 0.8rem;} .timer-container { gap: 5px; } } /* Reduced gap for small screens */
         @media print { body { user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; } .controls, .slicer, .panel-header, .footer, .timer-container button /* Hide all timer buttons */ { display: none; } #timer-display { display: none; } /* Hide timer display too */ .container { display: block; overflow: visible; } .panel { page-break-inside: avoid; box-shadow: none; margin-bottom: 20px; border: 1px solid var(--border-color); min-height: unset; } .panel-content { height: auto; position: static; } .responsive-iframe { position: static; width: 100%; height: 500px; } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } .fade-in { animation: fadeIn 0.5s ease-in; }
     </style>
 </head>
 <body>
@@ -185,7 +254,7 @@
             <div class="timer-container">
                 <span id="timer-display">02:12:00</span>
                 <button id="timer-control-button">Start Timer</button>
-                <button id="timer-restart-button">Restart</button> <!-- Added Restart Button -->
+                <button id="timer-restart-button">Restart</button>
             </div>
         </div>
         <div class="controls">
@@ -200,9 +269,9 @@
 
     <div class="container" id="main-container">
         <!-- Document and Form panels -->
-         <div class="panel document-panel" id="document-panel"> <div class="panel-header">Document Viewer</div> <div class="panel-content"> <iframe class="responsive-iframe" src="${documentUrl}" allowfullscreen title="Document Viewer"></iframe> </div> </div>
+         <div class="panel document-panel" id="document-panel"> <div class="panel-header">Đề</div> <div class="panel-content"> <iframe class="responsive-iframe" src="${documentUrl}" allowfullscreen title="Đề"></iframe> </div> </div>
          <div class="slicer" id="slicer"></div>
-         <div class="panel form-panel" id="form-panel"> <div class="panel-header">Test Form</div> <div class="panel-content"> <iframe class="responsive-iframe" src="${formUrl}" title="Test Form"></iframe> </div> </div>
+         <div class="panel form-panel" id="form-panel"> <div class="panel-header">Google Forms</div> <div class="panel-content"> <iframe class="responsive-iframe" src="${formUrl}" title="Google Forms"></iframe> </div> </div>
     </div>
 
     <footer class="footer">
@@ -211,11 +280,12 @@
 
     <script>
         // === Globals for Timer ===
-        const initialTimeInSeconds = (2 * 60 * 60) + (12 * 60); // 7920 seconds (Store initial value)
+        const initialTimeInSeconds = (2 * 60 * 60) + (12 * 60); // 2h12m = 7920 seconds
         let timerInterval = null;
         let timeLeftInSeconds = initialTimeInSeconds; // Initialize with the starting value
         let isTimerPaused = true;
         let timerEnded = false;
+        let warningShown = false; // Track if 15-minute warning has already been shown
 
         // === DOM Elements ===
         let timerDisplayElement;
@@ -245,26 +315,159 @@
         });
 
         // --- Theme Toggle ---
-        function toggleTheme() { /* ... Keep existing function ... */ const ct=document.documentElement.getAttribute('data-theme'); const nt=ct==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',nt); localStorage.setItem('preferred-theme',nt); updateThemeIcon(nt); }
-        function updateThemeIcon(theme) { /* ... Keep existing function ... */ const ti=document.getElementById('theme-icon'); if(ti) ti.textContent=theme==='dark'?'☀️':'🌙'; }
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('preferred-theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+        
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('theme-icon');
+            if (themeIcon) themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
 
         // --- Fullscreen ---
-        function toggleFullscreen() { /* ... Keep existing function ... */ const fi=document.getElementById('fullscreen-icon'); try { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().then(() => { if (fi) fi.textContent='✕'; }); } else if (document.exitFullscreen) { document.exitFullscreen().then(() => { if (fi) fi.textContent='⛶'; }); } } catch(e){console.error(\`FS error: \${e.message}\`); if(fi)fi.textContent=document.fullscreenElement?'✕':'⛶';} }
-        document.addEventListener('fullscreenchange', () => { /* ... Keep existing listener ... */ const fi=document.getElementById('fullscreen-icon'); if(fi)fi.textContent=document.fullscreenElement?'✕':'⛶'; });
+        function toggleFullscreen() {
+            const fullscreenIcon = document.getElementById('fullscreen-icon');
+            try {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().then(() => {
+                        if (fullscreenIcon) fullscreenIcon.textContent = '✕';
+                    });
+                } else if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        if (fullscreenIcon) fullscreenIcon.textContent = '⛶';
+                    });
+                }
+            } catch(e) {
+                console.error(\`Fullscreen error: \${e.message}\`);
+                if (fullscreenIcon) fullscreenIcon.textContent = document.fullscreenElement ? '✕' : '⛶';
+            }
+        }
+        
+        document.addEventListener('fullscreenchange', () => {
+            const fullscreenIcon = document.getElementById('fullscreen-icon');
+            if (fullscreenIcon) fullscreenIcon.textContent = document.fullscreenElement ? '✕' : '⛶';
+        });
 
         // --- Slicer Functionality ---
-        let isDragging = false; let animationFrameId = null;
-        function setupSlicer() { /* ... Keep existing slicer setup function ... */ const s=document.getElementById('slicer'); const dp=document.getElementById('document-panel'); const fp=document.getElementById('form-panel'); const c=document.getElementById('main-container'); if(!s||!dp||!fp||!c) return; let x=0; function upd(){if(!isDragging) return; const cr=c.getBoundingClientRect(); const sw=s.offsetWidth; const minW=150; let sl=x-cr.left; const minSL=minW; const maxSL=cr.width-minW-sw; sl=Math.max(minSL,Math.min(sl,maxSL)); const aw=cr.width-sw; const dw=sl; const fw=aw-dw; if(aw>0){ const tf=parseFloat(dp.style.flexGrow||3)+parseFloat(fp.style.flexGrow||2); dp.style.flexGrow=(dw/aw)*tf; fp.style.flexGrow=(fw/aw)*tf; dp.style.flexBasis='0'; fp.style.flexBasis='0';} animationFrameId=requestAnimationFrame(upd);} s.addEventListener('mousedown',(e)=>{ isDragging=true;x=e.clientX;s.classList.add('active');document.body.style.cursor='col-resize';disableIframePointerEvents(true);cancelAnimationFrame(animationFrameId);animationFrameId=requestAnimationFrame(upd);e.preventDefault();}); document.addEventListener('mousemove',(e)=>{if(isDragging)x=e.clientX;},{passive:true}); document.addEventListener('mouseup',()=>{if(isDragging){isDragging=false;s.classList.remove('active');document.body.style.cursor='';disableIframePointerEvents(false);cancelAnimationFrame(animationFrameId);}}); document.addEventListener('mouseleave',()=>{if(isDragging){isDragging=false;s.classList.remove('active');document.body.style.cursor='';disableIframePointerEvents(false);cancelAnimationFrame(animationFrameId);}}); }
-        function disableIframePointerEvents(disable) { /* ... Keep existing iframe helper ... */ document.querySelectorAll('.responsive-iframe').forEach(f=>{f.style.pointerEvents=disable?'none':'auto';}); }
+        let isDragging = false;
+        let animationFrameId = null;
+        
+        function setupSlicer() {
+            const slicer = document.getElementById('slicer');
+            const docPanel = document.getElementById('document-panel');
+            const formPanel = document.getElementById('form-panel');
+            const container = document.getElementById('main-container');
+            
+            if (!slicer || !docPanel || !formPanel || !container) return;
+            
+            let xPos = 0;
+            
+            function updatePanels() {
+                if (!isDragging) return;
+                
+                const containerRect = container.getBoundingClientRect();
+                const slicerWidth = slicer.offsetWidth;
+                const minWidth = 150;
+                
+                let slicerLeft = xPos - containerRect.left;
+                const minSlicerLeft = minWidth;
+                const maxSlicerLeft = containerRect.width - minWidth - slicerWidth;
+                
+                slicerLeft = Math.max(minSlicerLeft, Math.min(slicerLeft, maxSlicerLeft));
+                
+                const availableWidth = containerRect.width - slicerWidth;
+                const docWidth = slicerLeft;
+                const formWidth = availableWidth - docWidth;
+                
+                if (availableWidth > 0) {
+                    const totalFlex = parseFloat(docPanel.style.flexGrow || 3) + parseFloat(formPanel.style.flexGrow || 2);
+                    docPanel.style.flexGrow = (docWidth / availableWidth) * totalFlex;
+                    formPanel.style.flexGrow = (formWidth / availableWidth) * totalFlex;
+                    docPanel.style.flexBasis = '0';
+                    formPanel.style.flexBasis = '0';
+                }
+                
+                animationFrameId = requestAnimationFrame(updatePanels);
+            }
+            
+            slicer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                xPos = e.clientX;
+                slicer.classList.add('active');
+                document.body.style.cursor = 'col-resize';
+                disableIframePointerEvents(true);
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = requestAnimationFrame(updatePanels);
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) xPos = e.clientX;
+            }, { passive: true });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    slicer.classList.remove('active');
+                    document.body.style.cursor = '';
+                    disableIframePointerEvents(false);
+                    cancelAnimationFrame(animationFrameId);
+                }
+            });
+            
+            document.addEventListener('mouseleave', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    slicer.classList.remove('active');
+                    document.body.style.cursor = '';
+                    disableIframePointerEvents(false);
+                    cancelAnimationFrame(animationFrameId);
+                }
+            });
+        }
+        
+        function disableIframePointerEvents(disable) {
+            document.querySelectorAll('.responsive-iframe').forEach(frame => {
+                frame.style.pointerEvents = disable ? 'none' : 'auto';
+            });
+        }
 
         // --- Window Resize ---
-        window.addEventListener('resize', function() { /* ... Keep existing resize listener ... */ const s=document.getElementById('slicer'); if(s){const ds=window.getComputedStyle(s).display; if(ds==='none'&&isDragging){isDragging=false;s.classList.remove('active');document.body.style.cursor='';disableIframePointerEvents(false);cancelAnimationFrame(animationFrameId);}} });
+        window.addEventListener('resize', function() {
+            const slicer = document.getElementById('slicer');
+            if (slicer) {
+                const display = window.getComputedStyle(slicer).display;
+                if (display === 'none' && isDragging) {
+                    isDragging = false;
+                    slicer.classList.remove('active');
+                    document.body.style.cursor = '';
+                    disableIframePointerEvents(false);
+                    cancelAnimationFrame(animationFrameId);
+                }
+            }
+        });
 
         // --- Keyboard Shortcuts ---
-        document.addEventListener('keydown', function(event) { /* ... Keep existing shortcuts ... */ if(event.altKey){switch(event.key.toLowerCase()){case't':event.preventDefault();toggleTheme();break;case'f':event.preventDefault();toggleFullscreen();break;}} });
+        document.addEventListener('keydown', function(event) {
+            if (event.altKey) {
+                switch (event.key.toLowerCase()) {
+                    case 't':
+                        event.preventDefault();
+                        toggleTheme();
+                        break;
+                    case 'f':
+                        event.preventDefault();
+                        toggleFullscreen();
+                        break;
+                }
+            }
+        });
 
         // --- Timer Functions ---
-
         function formatTime(totalSeconds) {
             if (totalSeconds < 0) totalSeconds = 0;
             const hours = Math.floor(totalSeconds / 3600);
@@ -275,17 +478,18 @@
 
         function initializeTimerDisplay() {
             if (timerDisplayElement) {
-                timerDisplayElement.textContent = formatTime(timeLeftInSeconds); // Use current timeLeft
+                timerDisplayElement.textContent = formatTime(timeLeftInSeconds);
+                timerDisplayElement.style.color = 'var(--timer-text)'; // Reset to normal color
             }
-             if (timerControlButton) {
-                 timerControlButton.textContent = 'Start Timer';
-                 timerControlButton.classList.remove('paused');
-                 timerControlButton.disabled = false; // Ensure enabled
-                 // Ensure display is not "Time's Up!" if restarting
-                 if (timerDisplayElement && timerDisplayElement.textContent === "Time's Up!") {
-                      timerDisplayElement.textContent = formatTime(timeLeftInSeconds);
-                 }
-             }
+            if (timerControlButton) {
+                timerControlButton.textContent = 'Start Timer';
+                timerControlButton.classList.remove('paused');
+                timerControlButton.disabled = false; // Ensure enabled
+                // Ensure display is not "Time's Up!" if restarting
+                if (timerDisplayElement && timerDisplayElement.textContent === "Time's Up!") {
+                    timerDisplayElement.textContent = formatTime(timeLeftInSeconds);
+                }
+            }
         }
 
         function updateTimerDisplay() {
@@ -293,17 +497,47 @@
                 timerDisplayElement.textContent = formatTime(timeLeftInSeconds);
             }
         }
+        
+        // Function to show warning notification
+        function showWarningNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'time-warning-notification';
+            notification.textContent = message;
+            
+            // Add to document
+            document.body.appendChild(notification);
+            
+            // Remove after a few seconds
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 1000);
+            }, 5000);
+        }
 
         function startTimer() {
             if (timerEnded || timerInterval !== null) return;
             isTimerPaused = false;
             if (timerControlButton) {
-                 timerControlButton.textContent = 'Pause';
-                 timerControlButton.classList.remove('paused');
+                timerControlButton.textContent = 'Pause';
+                timerControlButton.classList.remove('paused');
             }
             timerInterval = setInterval(() => {
                 timeLeftInSeconds--;
                 updateTimerDisplay();
+                
+                // Add 15-minute warning
+                if (timeLeftInSeconds === 900 && !warningShown) { // 15 minutes = 900 seconds
+                    // Visual warning - change timer display color
+                    if (timerDisplayElement) {
+                        timerDisplayElement.style.color = 'var(--timer-warning-color)';
+                    }
+                    
+                    // Show non-blocking notification
+                    showWarningNotification("⚠️ Caution: 15 minutes remaining!");
+                    warningShown = true;
+                }
+                
                 if (timeLeftInSeconds <= 0) {
                     stopTimer(true); // Timer finished
                     alert("Time's up!");
@@ -312,14 +546,14 @@
         }
 
         function pauseTimer() {
-             if (isTimerPaused || timerEnded || timerInterval === null) return;
+            if (isTimerPaused || timerEnded || timerInterval === null) return;
             isTimerPaused = true;
             clearInterval(timerInterval);
             timerInterval = null;
-             if (timerControlButton) {
+            if (timerControlButton) {
                 timerControlButton.textContent = 'Resume';
                 timerControlButton.classList.add('paused');
-             }
+            }
         }
 
         function stopTimer(finished = false) {
@@ -327,31 +561,30 @@
             timerInterval = null;
             isTimerPaused = true;
             if (finished) {
-                 timerEnded = true;
-                 timeLeftInSeconds = 0;
-                 updateTimerDisplay();
-                 if (timerDisplayElement) {
-                      timerDisplayElement.textContent = "Time's Up!";
-                 }
-                 if (timerControlButton) {
-                     timerControlButton.textContent = 'Finished';
-                     timerControlButton.disabled = true;
-                     timerControlButton.classList.remove('paused');
-                 }
+                timerEnded = true;
+                timeLeftInSeconds = 0;
+                updateTimerDisplay();
+                if (timerDisplayElement) {
+                    timerDisplayElement.textContent = "Time's Up!";
+                }
+                if (timerControlButton) {
+                    timerControlButton.textContent = 'Finished';
+                    timerControlButton.disabled = true;
+                    timerControlButton.classList.remove('paused');
+                }
             }
             // Don't reset timeLeftInSeconds here if stopTimer is called for restart
         }
 
         function handleTimerControlClick() {
-             if (timerEnded) return;
-             if (isTimerPaused) {
-                 startTimer();
-             } else {
-                 pauseTimer();
-             }
-         }
+            if (timerEnded) return;
+            if (isTimerPaused) {
+                startTimer();
+            } else {
+                pauseTimer();
+            }
+        }
 
-        // *** NEW FUNCTION: restartTimer ***
         function restartTimer() {
             stopTimer(false); // Stop the timer without marking as 'finished'
 
@@ -359,13 +592,13 @@
             timeLeftInSeconds = initialTimeInSeconds; // Reset to the initial duration
             isTimerPaused = true;
             timerEnded = false;
+            warningShown = false; // Reset warning state
 
             // Reset the display and control button
             initializeTimerDisplay();
 
             console.log("Timer restarted."); // Optional log message
         }
-
     <\/script>
 </body>
 </html>
