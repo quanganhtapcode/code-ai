@@ -37,7 +37,7 @@
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box; /* Include padding in width */
+            box-sizing: border-box;
             font-size: 1rem;
         }
         input:focus {
@@ -59,27 +59,22 @@
             transition: background-color 0.2s ease;
             margin-top: 25px;
         }
-        button:hover {
+        button:hover:not(:disabled) {
             background-color: #2c8e43;
+        }
+        button:disabled {
+             background-color: #cccccc;
+             cursor: not-allowed;
         }
         .note {
             font-size: 0.9rem;
             color: #666;
             margin-top: 10px;
         }
-         /* Basic responsive adjustments */
         @media (max-width: 600px) {
-            body {
-                margin: 20px;
-                padding: 15px;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            button {
-                padding: 10px 20px;
-                font-size: 1rem;
-            }
+            body { margin: 20px; padding: 15px; }
+            h1 { font-size: 1.5rem; }
+            button { padding: 10px 20px; font-size: 1rem; }
         }
     </style>
 </head>
@@ -90,310 +85,109 @@
     <form id="generator-form">
         <div class="form-group">
             <label for="test-title">Test Title:</label>
-            <input type="text" id="test-title" name="test-title" placeholder="e.g., LEVEL 2 - Test 1 Session 1" required>
+            <input type="text" id="test-title" name="test-title" placeholder="e.g., LEVEL 2 - Test 1" required>
         </div>
-
         <div class="form-group">
-            <label for="doc-link">Link Đề Link:</label>
-            <input type="url" id="doc-link" name="doc-link" placeholder="Enter the Google Drive preview link or other embeddable document URL" required>
-             <p class="note">Example Google Drive Link: <code>https://drive.google.com/file/d/FILE_ID/preview</code></p>
+            <label for="doc-link">Link Đề:</label>
+            <input type="url" id="doc-link" name="doc-link" placeholder="Enter embeddable document URL" required>
+             <p class="note">Example Google Drive: <code>https://drive.google.com/file/d/FILE_ID/preview</code></p>
         </div>
-
         <div class="form-group">
             <label for="form-link">Google Form Link:</label>
-            <input type="url" id="form-link" name="form-link" placeholder="Enter the Google Form viewform link" required>
-            <p class="note">Example Google Form Link: <code>https://docs.google.com/forms/d/e/FORM_ID/viewform?usp=pp_url</code></p>
+            <input type="url" id="form-link" name="form-link" placeholder="Enter Google Form viewform link" required>
+            <p class="note">Example Google Form: <code>https://docs.google.com/forms/d/e/FORM_ID/viewform?usp=pp_url</code></p>
         </div>
-
         <button type="submit">Generate and Download HTML File</button>
     </form>
 
     <script>
-        // --- Main Generation Logic ---
         document.getElementById('generator-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent actual form submission
-
-            // Get values from the form
+            event.preventDefault();
             const testTitle = document.getElementById('test-title').value.trim();
             const docLink = document.getElementById('doc-link').value.trim();
             const formLink = document.getElementById('form-link').value.trim();
-
-            // Basic validation
             if (!testTitle || !docLink || !formLink) {
-                alert("Please fill in all fields.");
-                return;
+                alert("Please fill in all fields."); return;
             }
-
-             // Sanitize the title to create a safe filename
-             const filename = sanitizeFilename(`${testTitle}.html`);
-
-            // Generate the HTML content using the template
+            const filename = sanitizeFilename(`${testTitle}.html`);
             const generatedHtml = createTestHtml(testTitle, docLink, formLink);
-
-            // Trigger the download
             downloadFile(generatedHtml, filename, 'text/html');
         });
 
-
-        // --- Helper Functions ---
-
         function sanitizeFilename(input) {
-            // Replace characters invalid in filenames with underscores
-            // Adjust the regex as needed for more specific rules
             return input.replace(/[\\/:*?"<>|#%&{}]/g, '_').replace(/\s+/g, '_');
         }
 
         function downloadFile(content, filename, contentType) {
             const blob = new Blob([content], { type: contentType });
             const url = URL.createObjectURL(blob);
-
             const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a); // Append link to body (required for Firefox)
-            a.click();
-
-            // Clean up: remove link and revoke URL
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
         // --- HTML Template Function ---
-        // This function holds the structure of the final test page
-        // It uses template literals (backticks `` ` ``) to easily insert variables
         function createTestHtml(title, documentUrl, formUrl) {
-            // **IMPORTANT**: This template is based on the improved code from the previous step.
-            // Copy the *entire* HTML content of your final, improved test page here.
+            // ** === RESTART BUTTON and related JS added === **
             return `
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <title>${title}</title> <!-- Dynamic Title -->
+    <title>${title}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
-            /* Light theme variables */
-            --bg-primary: #f8f9fa;
-            --bg-secondary: #ffffff;
-            --text-primary: #212529;
-            --text-secondary: #495057;
-            --accent-color: #4285f4;
-            --secondary-accent: #34a853;
-            --border-color: #dee2e6;
-            --shadow-color: rgba(0, 0, 0, 0.15);
-            --transition-speed: 0.3s;
+            --bg-primary: #f8f9fa; --bg-secondary: #ffffff; --text-primary: #212529; --text-secondary: #495057; --accent-color: #4285f4; --secondary-accent: #34a853; --border-color: #dee2e6; --shadow-color: rgba(0, 0, 0, 0.15); --transition-speed: 0.3s; --timer-bg: #e9ecef; --timer-text: #495057; --timer-button-bg: #28a745; --timer-button-pause-bg: #ffc107; --timer-button-text: white; --timer-restart-button-bg: #6c757d; --timer-restart-button-hover-bg: #5a6268; --timer-restart-button-text: white;
         }
-
-        /* Dark theme variables */
         [data-theme="dark"] {
-            --bg-primary: #121212;
-            --bg-secondary: #1e1e1e;
-            --text-primary: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --accent-color: #8ab4f8;
-            --secondary-accent: #81c995;
-            --border-color: #333333;
-            --shadow-color: rgba(0, 0, 0, 0.3);
+             --bg-primary: #121212; --bg-secondary: #1e1e1e; --text-primary: #e0e0e0; --text-secondary: #b0b0b0; --accent-color: #8ab4f8; --secondary-accent: #81c995; --border-color: #333333; --shadow-color: rgba(0, 0, 0, 0.3); --timer-bg: #343a40; --timer-text: #e0e0e0; --timer-button-bg: #81c995; --timer-button-pause-bg: #fdd835; --timer-button-text: #121212; --timer-restart-button-bg: #5a6268; --timer-restart-button-hover-bg: #495057; --timer-restart-button-text: #e0e0e0;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color var(--transition-speed) ease,
-                        color var(--transition-speed) ease;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            line-height: 1.6;
-            /* Prevent text selection globally during drag */
-            user-select: none; /* Apply here or toggle via JS */
-           -webkit-user-select: none;
-           -moz-user-select: none;
-           -ms-user-select: none;
-        }
-
-        header {
-            padding: 16px 20px;
-            background-color: var(--bg-secondary);
-            box-shadow: 0 2px 10px var(--shadow-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--accent-color);
-        }
-
-        .controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .theme-toggle, .fullscreen-toggle {
-            background: var(--bg-secondary);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            user-select: none; /* Prevent selecting button text */
-        }
-
-        .theme-toggle:hover, .fullscreen-toggle:hover {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .container {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-            min-height: 0; /* Important for flex children */
-            overflow: hidden; /* Contain children */
-        }
-
-        .panel {
-            background-color: var(--bg-secondary);
-            border-radius: 10px;
-            box-shadow: 0 4px 12px var(--shadow-color);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            /* Default flex basis */
-            flex-basis: 0;
-            /* Prevent shrinking below content size (handled by min-width in JS) */
-            min-width: 0;
-        }
-
-        .document-panel {
-            flex-grow: 3; /* Initial ratio */
-        }
-
-        .form-panel {
-            flex-grow: 2; /* Initial ratio */
-        }
-
-        .panel-header {
-            padding: 14px 18px;
-            background-color: var(--accent-color);
-            color: white;
-            font-weight: 500;
-            flex-shrink: 0; /* Prevent header from shrinking */
-        }
-
-        .panel-content {
-            flex: 1; /* Take remaining space */
-            position: relative;
-            overflow: hidden; /* Clip iframe */
-        }
-
-        .responsive-iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .slicer {
-            width: 8px;
-            background-color: var(--border-color);
-            cursor: col-resize;
-            position: relative;
-            z-index: 10;
-            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-            flex-shrink: 0; /* Prevent slicer from shrinking */
-        }
-
-        .slicer:hover {
-            background-color: var(--accent-color);
-            transform: scaleX(1.5);
-        }
-
-        .slicer.active {
-            background-color: var(--accent-color);
-            transform: scaleX(1.5);
-            /* Static shadow for active state */
-            box-shadow: 0 0 8px var(--accent-color);
-        }
-
-        .footer {
-            text-align: center;
-            padding: 12px;
-            background-color: var(--bg-secondary);
-            color: var(--secondary-accent);
-            font-weight: 500;
-            font-style: italic;
-            box-shadow: 0 -2px 10px var(--shadow-color);
-            flex-shrink: 0; /* Prevent footer shrinking */
-        }
-
-        /* Responsive styles */
-        @media (max-width: 1100px) {
-            .container {
-                flex-direction: column;
-                gap: 20px;
-                overflow: auto; /* Allow scrolling on smaller screens */
-            }
-            .slicer { display: none; }
-            .panel {
-                min-height: 400px;
-                flex-grow: 1; flex-basis: auto; min-width: unset;
-             }
-             .document-panel, .form-panel { flex: 1; }
-        }
-        @media (max-width: 768px) {
-            header { flex-direction: column; gap: 10px; align-items: flex-start; }
-            .controls { width: 100%; justify-content: space-between; }
-            .container { padding: 10px; }
-            .panel { min-height: 350px; }
-        }
-        @media (max-width: 480px) {
-            .theme-toggle, .fullscreen-toggle { padding: 6px 8px; font-size: 0.8rem; }
-            .title { font-size: 1.2rem; }
-        }
-
-        /* Print optimization */
-        @media print {
-            body { user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; }
-            .controls, .slicer, .panel-header, .footer { display: none; }
-            .container { display: block; overflow: visible; }
-            .panel { page-break-inside: avoid; box-shadow: none; margin-bottom: 20px; border: 1px solid var(--border-color); min-height: unset; }
-             .panel-content { height: auto; position: static; }
-             .responsive-iframe { position: static; width: 100%; height: 500px; /* Example height */ }
-        }
-
-        /* Animation */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
+        body { font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; line-height: 1.6; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+        header { padding: 10px 20px; background-color: var(--bg-secondary); box-shadow: 0 2px 10px var(--shadow-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px; }
+        .header-left { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; } /* Allow wrap within left section too */
+        .title { font-size: 1.4rem; font-weight: 600; color: var(--accent-color); margin: 0; }
+        .timer-container { display: flex; align-items: center; gap: 8px; background-color: var(--timer-bg); padding: 5px 10px; border-radius: 6px; flex-wrap: wrap; } /* Added wrap */
+        #timer-display { font-size: 1.2rem; font-weight: bold; color: var(--timer-text); font-family: 'Courier New', Courier, monospace; white-space: nowrap; } /* Prevent wrap */
+        #timer-control-button, #timer-restart-button { padding: 6px 12px; font-size: 0.9rem; border: none; border-radius: 4px; color: var(--timer-button-text); cursor: pointer; transition: background-color 0.2s ease; }
+        #timer-control-button { background-color: var(--timer-button-bg); }
+        #timer-control-button.paused { background-color: var(--timer-button-pause-bg); color: #333; }
+        #timer-control-button:disabled { background-color: #6c757d; cursor: not-allowed; opacity: 0.7; }
+        #timer-restart-button { background-color: var(--timer-restart-button-bg); color: var(--timer-restart-button-text); }
+        #timer-restart-button:hover { background-color: var(--timer-restart-button-hover-bg); }
+        .controls { display: flex; gap: 12px; align-items: center; }
+        .theme-toggle, .fullscreen-toggle { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; transition: all 0.2s ease; user-select: none; }
+        .theme-toggle:hover, .fullscreen-toggle:hover { background-color: var(--accent-color); color: white; }
+        .container { flex: 1; padding: 20px; display: flex; flex-direction: row; gap: 10px; min-height: 0; overflow: hidden; }
+        .panel { background-color: var(--bg-secondary); border-radius: 10px; box-shadow: 0 4px 12px var(--shadow-color); overflow: hidden; display: flex; flex-direction: column; flex-basis: 0; min-width: 0; }
+        .document-panel { flex-grow: 3; }
+        .form-panel { flex-grow: 2; }
+        .panel-header { padding: 14px 18px; background-color: var(--accent-color); color: white; font-weight: 500; flex-shrink: 0; }
+        .panel-content { flex: 1; position: relative; overflow: hidden; }
+        .responsive-iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .slicer { width: 8px; background-color: var(--border-color); cursor: col-resize; position: relative; z-index: 10; transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; flex-shrink: 0; }
+        .slicer:hover { background-color: var(--accent-color); transform: scaleX(1.5); }
+        .slicer.active { background-color: var(--accent-color); transform: scaleX(1.5); box-shadow: 0 0 8px var(--accent-color); }
+        .footer { text-align: center; padding: 12px; background-color: var(--bg-secondary); color: var(--secondary-accent); font-weight: 500; font-style: italic; box-shadow: 0 -2px 10px var(--shadow-color); flex-shrink: 0; }
+        @media (max-width: 1100px) { .container { flex-direction: column; gap: 20px; overflow: auto; } .slicer { display: none; } .panel { min-height: 400px; flex-grow: 1; flex-basis: auto; min-width: unset; } .document-panel, .form-panel { flex: 1; } }
+        @media (max-width: 768px) { header { flex-direction: column; gap: 10px; align-items: stretch; } .header-left { justify-content: space-between; width: 100%; } .controls { justify-content: space-between; width: 100%;} .container { padding: 10px; } .panel { min-height: 350px; } }
+        @media (max-width: 480px) { .theme-toggle, .fullscreen-toggle { padding: 6px 8px; font-size: 0.8rem; } .title { font-size: 1.2rem; } #timer-display { font-size: 1rem;} #timer-control-button, #timer-restart-button { padding: 5px 10px; font-size: 0.8rem;} .timer-container { gap: 5px; } } /* Reduced gap for small screens */
+        @media print { body { user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; } .controls, .slicer, .panel-header, .footer, .timer-container button /* Hide all timer buttons */ { display: none; } #timer-display { display: none; } /* Hide timer display too */ .container { display: block; overflow: visible; } .panel { page-break-inside: avoid; box-shadow: none; margin-bottom: 20px; border: 1px solid var(--border-color); min-height: unset; } .panel-content { height: auto; position: static; } .responsive-iframe { position: static; width: 100%; height: 500px; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } .fade-in { animation: fadeIn 0.5s ease-in; }
     </style>
 </head>
 <body>
     <header>
-        <h1 class="title">${title}</h1> <!-- Dynamic Title -->
+        <div class="header-left">
+            <h1 class="title">${title}</h1>
+            <div class="timer-container">
+                <span id="timer-display">02:12:00</span>
+                <button id="timer-control-button">Start Timer</button>
+                <button id="timer-restart-button">Restart</button> <!-- Added Restart Button -->
+            </div>
+        </div>
         <div class="controls">
             <button class="theme-toggle" onclick="toggleTheme()" title="Switch theme (Alt+T)">
                 <span id="theme-icon">🌙</span> Theme
@@ -405,23 +199,10 @@
     </header>
 
     <div class="container" id="main-container">
-        <div class="panel document-panel" id="document-panel">
-            <div class="panel-header">Đề</div>
-            <div class="panel-content">
-                <!-- Dynamic Document URL -->
-                <iframe class="responsive-iframe" src="${documentUrl}" allowfullscreen title="Đề"></iframe>
-            </div>
-        </div>
-
-        <div class="slicer" id="slicer"></div>
-
-        <div class="panel form-panel" id="form-panel">
-            <div class="panel-header">Test Form</div>
-            <div class="panel-content">
-                 <!-- Dynamic Form URL -->
-                <iframe class="responsive-iframe" src="${formUrl}" title="Test Form"></iframe>
-            </div>
-        </div>
+        <!-- Document and Form panels -->
+         <div class="panel document-panel" id="document-panel"> <div class="panel-header">Document Viewer</div> <div class="panel-content"> <iframe class="responsive-iframe" src="${documentUrl}" allowfullscreen title="Document Viewer"></iframe> </div> </div>
+         <div class="slicer" id="slicer"></div>
+         <div class="panel form-panel" id="form-panel"> <div class="panel-header">Test Form</div> <div class="panel-content"> <iframe class="responsive-iframe" src="${formUrl}" title="Test Form"></iframe> </div> </div>
     </div>
 
     <footer class="footer">
@@ -429,127 +210,163 @@
     </footer>
 
     <script>
+        // === Globals for Timer ===
+        const initialTimeInSeconds = (2 * 60 * 60) + (12 * 60); // 7920 seconds (Store initial value)
+        let timerInterval = null;
+        let timeLeftInSeconds = initialTimeInSeconds; // Initialize with the starting value
+        let isTimerPaused = true;
+        let timerEnded = false;
+
+        // === DOM Elements ===
+        let timerDisplayElement;
+        let timerControlButton;
+        let timerRestartButton; // Added variable for Restart button
+
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', function() {
+            // Theme setup
             const savedTheme = localStorage.getItem('preferred-theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
             updateThemeIcon(savedTheme);
+
+            // Initial animation
             document.getElementById('main-container').classList.add('fade-in');
+
+            // Slicer setup
             setupSlicer();
+
+            // Timer Setup
+            timerDisplayElement = document.getElementById('timer-display');
+            timerControlButton = document.getElementById('timer-control-button');
+            timerRestartButton = document.getElementById('timer-restart-button'); // Get Restart button element
+            initializeTimerDisplay();
+            timerControlButton.addEventListener('click', handleTimerControlClick);
+            timerRestartButton.addEventListener('click', restartTimer); // Add listener for Restart button
         });
 
         // --- Theme Toggle ---
-        function toggleTheme() { /* ... (keep existing theme functions) ... */
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('preferred-theme', newTheme);
-            updateThemeIcon(newTheme);
-        }
-        function updateThemeIcon(theme) {
-            const themeIcon = document.getElementById('theme-icon');
-            if (themeIcon) themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
-        }
+        function toggleTheme() { /* ... Keep existing function ... */ const ct=document.documentElement.getAttribute('data-theme'); const nt=ct==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',nt); localStorage.setItem('preferred-theme',nt); updateThemeIcon(nt); }
+        function updateThemeIcon(theme) { /* ... Keep existing function ... */ const ti=document.getElementById('theme-icon'); if(ti) ti.textContent=theme==='dark'?'☀️':'🌙'; }
 
         // --- Fullscreen ---
-        function toggleFullscreen() { /* ... (keep existing fullscreen functions) ... */
-            const fullscreenIcon = document.getElementById('fullscreen-icon');
-            try {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().then(() => {
-                         if (fullscreenIcon) fullscreenIcon.textContent = '✕';
-                    });
-                } else if (document.exitFullscreen) {
-                    document.exitFullscreen().then(() => {
-                         if (fullscreenIcon) fullscreenIcon.textContent = '⛶';
-                    });
-                }
-            } catch (err) { console.error(\`Fullscreen API error: \${err.message}\`); if (fullscreenIcon) fullscreenIcon.textContent = document.fullscreenElement ? '✕' : '⛶'; }
-        }
-         document.addEventListener('fullscreenchange', () => {
-            const fullscreenIcon = document.getElementById('fullscreen-icon');
-            if (fullscreenIcon) fullscreenIcon.textContent = document.fullscreenElement ? '✕' : '⛶';
-         });
+        function toggleFullscreen() { /* ... Keep existing function ... */ const fi=document.getElementById('fullscreen-icon'); try { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().then(() => { if (fi) fi.textContent='✕'; }); } else if (document.exitFullscreen) { document.exitFullscreen().then(() => { if (fi) fi.textContent='⛶'; }); } } catch(e){console.error(\`FS error: \${e.message}\`); if(fi)fi.textContent=document.fullscreenElement?'✕':'⛶';} }
+        document.addEventListener('fullscreenchange', () => { /* ... Keep existing listener ... */ const fi=document.getElementById('fullscreen-icon'); if(fi)fi.textContent=document.fullscreenElement?'✕':'⛶'; });
 
         // --- Slicer Functionality ---
-        let isDragging = false;
-        let animationFrameId = null;
-        function setupSlicer() { /* ... (keep existing slicer setup function) ... */
-            const slicer = document.getElementById('slicer');
-            const documentPanel = document.getElementById('document-panel');
-            const formPanel = document.getElementById('form-panel');
-            const container = document.getElementById('main-container');
-            if (!slicer || !documentPanel || !formPanel || !container) return;
-            let currentX = 0;
-
-            function updatePanelsSize() {
-                if (!isDragging) return;
-                const containerRect = container.getBoundingClientRect();
-                const slicerWidth = slicer.offsetWidth;
-                const minPanelWidth = 150;
-                let slicerLeft = currentX - containerRect.left;
-                const minSlicerLeft = minPanelWidth;
-                const maxSlicerLeft = containerRect.width - minPanelWidth - slicerWidth;
-                slicerLeft = Math.max(minSlicerLeft, Math.min(slicerLeft, maxSlicerLeft));
-                const availableWidth = containerRect.width - slicerWidth;
-                const documentWidth = slicerLeft;
-                const formWidth = availableWidth - documentWidth;
-                if (availableWidth > 0) {
-                     const totalFlex = parseFloat(documentPanel.style.flexGrow || 3) + parseFloat(formPanel.style.flexGrow || 2); // Use initial ratios as fallback
-                     documentPanel.style.flexGrow = (documentWidth / availableWidth) * totalFlex;
-                     formPanel.style.flexGrow = (formWidth / availableWidth) * totalFlex;
-                     documentPanel.style.flexBasis = '0';
-                     formPanel.style.flexBasis = '0';
-                }
-                animationFrameId = requestAnimationFrame(updatePanelsSize);
-            }
-
-            slicer.addEventListener('mousedown', (e) => {
-                isDragging = true; currentX = e.clientX; slicer.classList.add('active');
-                document.body.style.cursor = 'col-resize'; disableIframePointerEvents(true);
-                cancelAnimationFrame(animationFrameId); animationFrameId = requestAnimationFrame(updatePanelsSize);
-                e.preventDefault();
-            });
-            document.addEventListener('mousemove', (e) => { if (isDragging) currentX = e.clientX; }, { passive: true });
-            document.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false; slicer.classList.remove('active'); document.body.style.cursor = '';
-                    disableIframePointerEvents(false); cancelAnimationFrame(animationFrameId);
-                }
-            });
-             document.addEventListener('mouseleave', () => { // Handle leaving window
-                 if (isDragging) {
-                     isDragging = false; slicer.classList.remove('active'); document.body.style.cursor = '';
-                     disableIframePointerEvents(false); cancelAnimationFrame(animationFrameId);
-                 }
-             });
-        }
-        function disableIframePointerEvents(disable) { /* ... (keep existing iframe helper) ... */
-             document.querySelectorAll('.responsive-iframe').forEach(iframe => { iframe.style.pointerEvents = disable ? 'none' : 'auto'; });
-        }
+        let isDragging = false; let animationFrameId = null;
+        function setupSlicer() { /* ... Keep existing slicer setup function ... */ const s=document.getElementById('slicer'); const dp=document.getElementById('document-panel'); const fp=document.getElementById('form-panel'); const c=document.getElementById('main-container'); if(!s||!dp||!fp||!c) return; let x=0; function upd(){if(!isDragging) return; const cr=c.getBoundingClientRect(); const sw=s.offsetWidth; const minW=150; let sl=x-cr.left; const minSL=minW; const maxSL=cr.width-minW-sw; sl=Math.max(minSL,Math.min(sl,maxSL)); const aw=cr.width-sw; const dw=sl; const fw=aw-dw; if(aw>0){ const tf=parseFloat(dp.style.flexGrow||3)+parseFloat(fp.style.flexGrow||2); dp.style.flexGrow=(dw/aw)*tf; fp.style.flexGrow=(fw/aw)*tf; dp.style.flexBasis='0'; fp.style.flexBasis='0';} animationFrameId=requestAnimationFrame(upd);} s.addEventListener('mousedown',(e)=>{ isDragging=true;x=e.clientX;s.classList.add('active');document.body.style.cursor='col-resize';disableIframePointerEvents(true);cancelAnimationFrame(animationFrameId);animationFrameId=requestAnimationFrame(upd);e.preventDefault();}); document.addEventListener('mousemove',(e)=>{if(isDragging)x=e.clientX;},{passive:true}); document.addEventListener('mouseup',()=>{if(isDragging){isDragging=false;s.classList.remove('active');document.body.style.cursor='';disableIframePointerEvents(false);cancelAnimationFrame(animationFrameId);}}); document.addEventListener('mouseleave',()=>{if(isDragging){isDragging=false;s.classList.remove('active');document.body.style.cursor='';disableIframePointerEvents(false);cancelAnimationFrame(animationFrameId);}}); }
+        function disableIframePointerEvents(disable) { /* ... Keep existing iframe helper ... */ document.querySelectorAll('.responsive-iframe').forEach(f=>{f.style.pointerEvents=disable?'none':'auto';}); }
 
         // --- Window Resize ---
-        window.addEventListener('resize', function() { /* ... (keep existing resize listener, including check for slicer display) ... */
-            const slicer = document.getElementById('slicer');
-            if (slicer) {
-                const displayStyle = window.getComputedStyle(slicer).display;
-                if (displayStyle === 'none' && isDragging) {
-                    isDragging = false; slicer.classList.remove('active'); document.body.style.cursor = '';
-                    disableIframePointerEvents(false); cancelAnimationFrame(animationFrameId);
-                }
-            }
-        });
+        window.addEventListener('resize', function() { /* ... Keep existing resize listener ... */ const s=document.getElementById('slicer'); if(s){const ds=window.getComputedStyle(s).display; if(ds==='none'&&isDragging){isDragging=false;s.classList.remove('active');document.body.style.cursor='';disableIframePointerEvents(false);cancelAnimationFrame(animationFrameId);}} });
 
         // --- Keyboard Shortcuts ---
-        document.addEventListener('keydown', function(event) { /* ... (keep existing keyboard shortcuts) ... */
-             if (event.altKey) {
-                 switch (event.key.toLowerCase()) {
-                    case 't': event.preventDefault(); toggleTheme(); break;
-                    case 'f': event.preventDefault(); toggleFullscreen(); break;
+        document.addEventListener('keydown', function(event) { /* ... Keep existing shortcuts ... */ if(event.altKey){switch(event.key.toLowerCase()){case't':event.preventDefault();toggleTheme();break;case'f':event.preventDefault();toggleFullscreen();break;}} });
+
+        // --- Timer Functions ---
+
+        function formatTime(totalSeconds) {
+            if (totalSeconds < 0) totalSeconds = 0;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return \`\${String(hours).padStart(2, '0')}:\${String(minutes).padStart(2, '0')}:\${String(seconds).padStart(2, '0')}\`;
+        }
+
+        function initializeTimerDisplay() {
+            if (timerDisplayElement) {
+                timerDisplayElement.textContent = formatTime(timeLeftInSeconds); // Use current timeLeft
+            }
+             if (timerControlButton) {
+                 timerControlButton.textContent = 'Start Timer';
+                 timerControlButton.classList.remove('paused');
+                 timerControlButton.disabled = false; // Ensure enabled
+                 // Ensure display is not "Time's Up!" if restarting
+                 if (timerDisplayElement && timerDisplayElement.textContent === "Time's Up!") {
+                      timerDisplayElement.textContent = formatTime(timeLeftInSeconds);
+                 }
+             }
+        }
+
+        function updateTimerDisplay() {
+            if (timerDisplayElement) {
+                timerDisplayElement.textContent = formatTime(timeLeftInSeconds);
+            }
+        }
+
+        function startTimer() {
+            if (timerEnded || timerInterval !== null) return;
+            isTimerPaused = false;
+            if (timerControlButton) {
+                 timerControlButton.textContent = 'Pause';
+                 timerControlButton.classList.remove('paused');
+            }
+            timerInterval = setInterval(() => {
+                timeLeftInSeconds--;
+                updateTimerDisplay();
+                if (timeLeftInSeconds <= 0) {
+                    stopTimer(true); // Timer finished
+                    alert("Time's up!");
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+             if (isTimerPaused || timerEnded || timerInterval === null) return;
+            isTimerPaused = true;
+            clearInterval(timerInterval);
+            timerInterval = null;
+             if (timerControlButton) {
+                timerControlButton.textContent = 'Resume';
+                timerControlButton.classList.add('paused');
+             }
+        }
+
+        function stopTimer(finished = false) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isTimerPaused = true;
+            if (finished) {
+                 timerEnded = true;
+                 timeLeftInSeconds = 0;
+                 updateTimerDisplay();
+                 if (timerDisplayElement) {
+                      timerDisplayElement.textContent = "Time's Up!";
+                 }
+                 if (timerControlButton) {
+                     timerControlButton.textContent = 'Finished';
+                     timerControlButton.disabled = true;
+                     timerControlButton.classList.remove('paused');
                  }
             }
-        });
-    <\/script> <!-- Escaped closing script tag for template literal -->
+            // Don't reset timeLeftInSeconds here if stopTimer is called for restart
+        }
+
+        function handleTimerControlClick() {
+             if (timerEnded) return;
+             if (isTimerPaused) {
+                 startTimer();
+             } else {
+                 pauseTimer();
+             }
+         }
+
+        // *** NEW FUNCTION: restartTimer ***
+        function restartTimer() {
+            stopTimer(false); // Stop the timer without marking as 'finished'
+
+            // Reset state variables
+            timeLeftInSeconds = initialTimeInSeconds; // Reset to the initial duration
+            isTimerPaused = true;
+            timerEnded = false;
+
+            // Reset the display and control button
+            initializeTimerDisplay();
+
+            console.log("Timer restarted."); // Optional log message
+        }
+
+    <\/script>
 </body>
 </html>
 `;
