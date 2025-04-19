@@ -195,6 +195,68 @@
         .controls { display: flex; gap: 12px; align-items: center; }
         .theme-toggle, .fullscreen-toggle { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; transition: all 0.2s ease; user-select: none; }
         .theme-toggle:hover, .fullscreen-toggle:hover { background-color: var(--accent-color); color: white; }
+        
+        /* Account Switcher Styles */
+        .account-switcher {
+            position: relative;
+            display: inline-block;
+        }
+        .account-toggle {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .account-toggle:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .account-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 200px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            z-index: 1000;
+            display: none;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .account-dropdown.show {
+            display: block;
+            animation: fadeIn 0.2s ease-in;
+        }
+        .account-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .account-option:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .account-option.active {
+            background-color: rgba(66, 133, 244, 0.1);
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .account-dropdown {
+                right: auto;
+                left: 0;
+            }
+        }
+        
         .container { flex: 1; padding: 20px; display: flex; flex-direction: row; gap: 10px; min-height: 0; overflow: hidden; }
         .panel { background-color: var(--bg-secondary); border-radius: 10px; box-shadow: 0 4px 12px var(--shadow-color); overflow: hidden; display: flex; flex-direction: column; flex-basis: 0; min-width: 0; }
         .document-panel { flex-grow: 3; }
@@ -243,7 +305,7 @@
         
         @media (max-width: 1100px) { .container { flex-direction: column; gap: 20px; overflow: auto; } .slicer { display: none; } .panel { min-height: 400px; flex-grow: 1; flex-basis: auto; min-width: unset; } .document-panel, .form-panel { flex: 1; } }
         @media (max-width: 768px) { header { flex-direction: column; gap: 10px; align-items: stretch; } .header-left { justify-content: space-between; width: 100%; } .controls { justify-content: space-between; width: 100%;} .container { padding: 10px; } .panel { min-height: 350px; } }
-        @media (max-width: 480px) { .theme-toggle, .fullscreen-toggle { padding: 6px 8px; font-size: 0.8rem; } .title { font-size: 1.2rem; } #timer-display { font-size: 1rem;} #timer-control-button, #timer-restart-button { padding: 5px 10px; font-size: 0.8rem;} .timer-container { gap: 5px; } } /* Reduced gap for small screens */
+        @media (max-width: 480px) { .theme-toggle, .fullscreen-toggle, .account-toggle { padding: 6px 8px; font-size: 0.8rem; } .title { font-size: 1.2rem; } #timer-display { font-size: 1rem;} #timer-control-button, #timer-restart-button { padding: 5px 10px; font-size: 0.8rem;} .timer-container { gap: 5px; } } /* Reduced gap for small screens */
         @media print { body { user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; } .controls, .slicer, .panel-header, .footer, .timer-container button /* Hide all timer buttons */ { display: none; } #timer-display { display: none; } /* Hide timer display too */ .container { display: block; overflow: visible; } .panel { page-break-inside: avoid; box-shadow: none; margin-bottom: 20px; border: 1px solid var(--border-color); min-height: unset; } .panel-content { height: auto; position: static; } .responsive-iframe { position: static; width: 100%; height: 500px; } }
     </style>
 </head>
@@ -258,6 +320,18 @@
             </div>
         </div>
         <div class="controls">
+            <div class="account-switcher">
+                <button class="account-toggle" title="Switch Google Account">
+                    <span id="account-icon">👤</span> Account
+                </button>
+                <div class="account-dropdown">
+                    <div class="account-option" data-account="0">Default Account</div>
+                    <div class="account-option" data-account="1">Account 1</div>
+                    <div class="account-option" data-account="2">Account 2</div>
+                    <div class="account-option" data-account="3">Account 3</div>
+                    <div class="account-option" data-account="4">Account 4</div>
+                </div>
+            </div>
             <button class="theme-toggle" onclick="toggleTheme()" title="Switch theme (Alt+T)">
                 <span id="theme-icon">🌙</span> Theme
             </button>
@@ -312,6 +386,9 @@
             initializeTimerDisplay();
             timerControlButton.addEventListener('click', handleTimerControlClick);
             timerRestartButton.addEventListener('click', restartTimer); // Add listener for Restart button
+            
+            // Initialize Account Switcher
+            initAccountSwitcher();
         });
 
         // --- Theme Toggle ---
@@ -598,6 +675,78 @@
             initializeTimerDisplay();
 
             console.log("Timer restarted."); // Optional log message
+        }
+        
+        // --- Account Switching Functionality ---
+        function initAccountSwitcher() {
+            let currentAccount = 0; // Default account
+            const accountToggle = document.querySelector('.account-toggle');
+            const accountDropdown = document.querySelector('.account-dropdown');
+            const accountOptions = document.querySelectorAll('.account-option');
+            const formIframe = document.querySelector('.form-panel .responsive-iframe');
+
+            // Toggle dropdown visibility
+            if (accountToggle) {
+                accountToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    accountDropdown.classList.toggle('show');
+                });
+            }
+
+            // Hide dropdown when clicking elsewhere
+            document.addEventListener('click', function() {
+                if (accountDropdown) {
+                    accountDropdown.classList.remove('show');
+                }
+            });
+
+            // Prevent clicks inside dropdown from closing it
+            if (accountDropdown) {
+                accountDropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // Handle account selection
+            if (accountOptions && accountOptions.length > 0) {
+                accountOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const selectedAccount = this.getAttribute('data-account');
+                        switchToAccount(selectedAccount);
+                        
+                        // Update active state
+                        accountOptions.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Close the dropdown
+                        accountDropdown.classList.remove('show');
+                    });
+                });
+                
+                // Set initial active state
+                accountOptions[0].classList.add('active');
+            }
+
+            // Function to switch Google account in the iframe
+            function switchToAccount(accountNumber) {
+                if (formIframe) {
+                    // Get the current iframe src
+                    const currentSrc = formIframe.src;
+                    
+                    // Create a new URL object to easily manipulate parameters
+                    const url = new URL(currentSrc);
+                    
+                    // Set the authuser parameter 
+                    url.searchParams.set('authuser', accountNumber);
+                    
+                    // Update the iframe src
+                    formIframe.src = url.toString();
+                    
+                    // Update current account tracking
+                    currentAccount = accountNumber;
+                    console.log(\`Switched to account \${accountNumber}\`);
+                }
+            }
         }
     <\/script>
 </body>
